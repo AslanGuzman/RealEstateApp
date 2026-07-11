@@ -1,6 +1,9 @@
+using RealEstateApp.Infrastructure.Persistence;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
+builder.Services.AddPersistenceLayerIoc(builder.Configuration);
 
 var app = builder.Build();
 
