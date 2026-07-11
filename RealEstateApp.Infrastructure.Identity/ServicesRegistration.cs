@@ -53,6 +53,7 @@ namespace RealEstateApp.Infrastructure.Identity
             {
                 opt.RequireHttpsMetadata = false;
                 opt.SaveToken = false;
+                opt.MapInboundClaims = false;
                 opt.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
