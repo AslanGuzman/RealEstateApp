@@ -19,17 +19,47 @@ namespace RealEstateApp.Infrastructure.Identity.Services
             _propertyRepository = propertyRepository;
         }
 
-        public async Task<List<AgentDto>> GetAllAgentsAsync(bool onlyActive = true)
+        public async Task<List<AgentDto>> GetAllAgentsAsync(bool onlyActive = true, string? name = null)
         {
             var users = await _userManager.GetUsersInRoleAsync(Roles.Agent.ToString());
+
+            var filtered = users.Where(u => !onlyActive || u.IsActive);
+
+            if (!string.IsNullOrWhiteSpace(name))
+            {
+                filtered = filtered.Where(u =>
+                    u.Name.Contains(name, StringComparison.OrdinalIgnoreCase) ||
+                    u.LastName.Contains(name, StringComparison.OrdinalIgnoreCase));
+            }
+
             var agents = new List<AgentDto>();
 
-            foreach (var user in users.Where(u => !onlyActive || u.IsActive).OrderBy(u => u.Name).ThenBy(u => u.LastName))
+            foreach (var user in filtered.OrderBy(u => u.Name).ThenBy(u => u.LastName))
             {
                 agents.Add(await MapAgentAsync(user));
             }
 
             return agents;
+        }
+
+        public async Task<AgentContactDto?> GetAgentContactAsync(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+
+            if (user == null || !await _userManager.IsInRoleAsync(user, Roles.Agent.ToString()))
+            {
+                return null;
+            }
+
+            return new AgentContactDto
+            {
+                Id = user.Id,
+                Name = user.Name,
+                LastName = user.LastName,
+                Phone = user.PhoneNumber,
+                Email = user.Email,
+                ProfileImage = user.ProfileImage
+            };
         }
 
         public async Task<AgentDto?> GetAgentByIdAsync(string id)
