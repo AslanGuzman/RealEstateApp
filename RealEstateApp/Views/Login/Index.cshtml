@@ -1,0 +1,46 @@
+@model LoginViewModel?
+@{
+    ViewData["Title"] = "Iniciar sesión";
+}
+
+<div class="auth-wrap">
+    <div class="auth-card">
+        <div class="text-center auth-brand">
+            <svg class="icon"><use href="#i-building" /></svg>
+        </div>
+        <h1 class="text-center mb-1">Bienvenido de nuevo</h1>
+        <p class="text-center text-secondary mb-4">Ingresa tus credenciales para continuar</p>
+
+        @if (TempData["RegisterMessage"] != null)
+        {
+            <div class="alert alert-success alert-app">@TempData["RegisterMessage"]</div>
+        }
+
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger alert-app validation-summary-errors"></div>
+
+        <form method="post" asp-controller="Login" asp-action="Index">
+            <div class="form-floating mb-3">
+                <input asp-for="UserName" class="form-control" placeholder="Correo o nombre de usuario" />
+                <label asp-for="UserName">Correo o nombre de usuario</label>
+                <span asp-validation-for="UserName" class="field-validation-error"></span>
+            </div>
+            <div class="form-floating mb-4">
+                <input asp-for="Password" type="password" class="form-control" placeholder="Contraseña" />
+                <label asp-for="Password">Contraseña</label>
+                <span asp-validation-for="Password" class="field-validation-error"></span>
+            </div>
+            <button type="submit" class="btn btn-brand w-100 py-2">Iniciar sesión</button>
+        </form>
+
+        <p class="text-center text-secondary mt-4 mb-0">
+            ¿No tienes cuenta? <a class="text-decoration-none" asp-controller="Join" asp-action="Index">Únete a la app</a>
+        </p>
+        <p class="text-center mt-2 mb-0">
+            <a class="btn btn-ghost btn-sm" asp-controller="Home" asp-action="Index">Volver al inicio</a>
+        </p>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
