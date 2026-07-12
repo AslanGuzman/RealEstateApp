@@ -1,0 +1,20 @@
+@model List<PropertyDto>
+@{
+    ViewData["Title"] = "Propiedades del agente";
+}
+
+<div class="container">
+    <nav aria-label="breadcrumb" class="pt-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a class="text-decoration-none" asp-controller="Agent" asp-action="Index">Agentes</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@(ViewBag.AgentName ?? "Agente")</li>
+        </ol>
+    </nav>
+
+    <div class="page-header pt-2">
+        <h1>@(ViewBag.AgentName ?? "Agente")</h1>
+        <p class="lead-soft">Propiedades disponibles de este agente</p>
+    </div>
+
+    <partial name="_PropertyGrid" model="Model" view-data="ViewData" />
+</div>

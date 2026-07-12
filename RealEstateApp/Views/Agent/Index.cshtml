@@ -1,0 +1,62 @@
+@model List<AgentDto>
+@{
+    ViewData["Title"] = "Agentes";
+}
+
+<div class="container">
+    <div class="page-header d-flex flex-wrap justify-content-between align-items-end gap-3">
+        <div>
+            <h1>Nuestros agentes</h1>
+            <p class="lead-soft">Profesionales inmobiliarios listos para ayudarte</p>
+        </div>
+        <form method="get" asp-controller="Agent" asp-action="Index" class="search-code">
+            <div class="input-group">
+                <input class="form-control" type="text" name="name" placeholder="Buscar por nombre o apellido" value="@ViewBag.SearchName" />
+                <button class="btn btn-brand" type="submit">
+                    <svg class="icon"><use href="#i-search" /></svg>
+                    Buscar
+                </button>
+            </div>
+            @if (!string.IsNullOrWhiteSpace(ViewBag.SearchName as string))
+            {
+                <div class="mt-2 text-end">
+                    <a class="btn btn-ghost btn-sm" asp-controller="Agent" asp-action="Index">Limpiar búsqueda</a>
+                </div>
+            }
+        </form>
+    </div>
+
+    @if (Model.Count == 0)
+    {
+        <div class="empty-state">
+            <svg class="icon"><use href="#i-user" /></svg>
+            <p>@ViewBag.EmptyMessage</p>
+        </div>
+    }
+    else
+    {
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-4">
+            @foreach (var agent in Model)
+            {
+                <div class="col">
+                    <a class="text-decoration-none" asp-controller="Agent" asp-action="Properties" asp-route-id="@agent.Id">
+                        <div class="agent-card">
+                            @if (!string.IsNullOrWhiteSpace(agent.ProfileImage))
+                            {
+                                <img class="avatar mb-3" src="~/@agent.ProfileImage" alt="Foto de @agent.Name" />
+                            }
+                            else
+                            {
+                                <span class="avatar-empty mb-3">
+                                    <svg class="icon"><use href="#i-user" /></svg>
+                                </span>
+                            }
+                            <h2 class="h5 mb-1">@agent.Name @agent.LastName</h2>
+                            <p class="text-secondary mb-0">@agent.PropertiesQuantity propiedades</p>
+                        </div>
+                    </a>
+                </div>
+            }
+        </div>
+    }
+</div>
