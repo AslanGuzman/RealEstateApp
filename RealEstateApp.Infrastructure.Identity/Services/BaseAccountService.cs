@@ -33,7 +33,7 @@ namespace RealEstateApp.Infrastructure.Identity.Services
             if (userWithSameUserName != null)
             {
                 response.HasError = true;
-                response.Errors.Add($"El nombre de usuario {dto.UserName} ya está en uso");
+                response.Errors.Add("Ya existe un usuario registrado con este nombre de usuario");
                 return response;
             }
 
@@ -41,16 +41,19 @@ namespace RealEstateApp.Infrastructure.Identity.Services
             if (userWithSameEmail != null)
             {
                 response.HasError = true;
-                response.Errors.Add($"El correo {dto.Email} ya está registrado");
+                response.Errors.Add("Ya existe un usuario registrado con este correo electrónico");
                 return response;
             }
 
-            var identityCardInUse = await UserManager.Users.AnyAsync(u => u.IdentityCard == dto.IdentityCard);
-            if (identityCardInUse)
+            if (!string.IsNullOrWhiteSpace(dto.IdentityCard))
             {
-                response.HasError = true;
-                response.Errors.Add($"La cédula {dto.IdentityCard} ya está registrada");
-                return response;
+                var identityCardInUse = await UserManager.Users.AnyAsync(u => u.IdentityCard == dto.IdentityCard);
+                if (identityCardInUse)
+                {
+                    response.HasError = true;
+                    response.Errors.Add("Ya existe un usuario registrado con esta cédula");
+                    return response;
+                }
             }
 
             AppUser user = new()

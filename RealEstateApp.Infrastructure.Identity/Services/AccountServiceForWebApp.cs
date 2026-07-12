@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using RealEstateApp.Core.Application.Dtos.Email;
 using RealEstateApp.Core.Application.Dtos.User;
 using RealEstateApp.Core.Application.Interfaces;
 using RealEstateApp.Core.Domain.Common.Enums;
@@ -8,9 +9,12 @@ namespace RealEstateApp.Infrastructure.Identity.Services
 {
     public class AccountServiceForWebApp : BaseAccountService, IAccountServiceForWebApp
     {
-        public AccountServiceForWebApp(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
+        private readonly IEmailService _emailService;
+
+        public AccountServiceForWebApp(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IEmailService emailService)
             : base(userManager, signInManager)
         {
+            _emailService = emailService;
         }
 
         public async Task<LoginResponseDto> AuthenticateAsync(LoginDto loginDto)
@@ -26,30 +30,38 @@ namespace RealEstateApp.Infrastructure.Identity.Services
                 Errors = []
             };
 
-            var user = await UserManager.FindByNameAsync(loginDto.UserName);
+            var user = await UserManager.FindByNameAsync(loginDto.UserName)
+                ?? await UserManager.FindByEmailAsync(loginDto.UserName);
 
             if (user == null)
             {
                 response.HasError = true;
-                response.Errors.Add("Credenciales inválidas, intente de nuevo");
+                response.Errors.Add("Los datos de acceso son inválidos");
                 return response;
             }
 
             if (!user.EmailConfirmed)
             {
                 response.HasError = true;
-                response.Errors.Add("Debe activar su cuenta desde el enlace enviado a su correo");
+                response.Errors.Add("Debe activar su cuenta desde el enlace enviado a su correo electrónico");
                 return response;
             }
 
             if (!user.IsActive)
             {
                 response.HasError = true;
-                response.Errors.Add("Su cuenta está inactiva, contacte al administrador");
+                response.Errors.Add("El usuario se encuentra inactivo y no puede iniciar sesión");
                 return response;
             }
 
             var roles = await UserManager.GetRolesAsync(user);
+
+            if (roles.Count == 0)
+            {
+                response.HasError = true;
+                response.Errors.Add("El usuario no tiene un rol válido asignado. Póngase en contacto con un administrador");
+                return response;
+            }
 
             if (roles.Contains(Roles.Developer.ToString()))
             {
@@ -69,7 +81,7 @@ namespace RealEstateApp.Infrastructure.Identity.Services
                 }
                 else
                 {
-                    response.Errors.Add("Credenciales inválidas, intente de nuevo");
+                    response.Errors.Add("Los datos de acceso son inválidos");
                 }
                 return response;
             }
@@ -88,6 +100,67 @@ namespace RealEstateApp.Infrastructure.Identity.Services
         public async Task SignOutAsync()
         {
             await SignInManager.SignOutAsync();
+        }
+
+        public async Task<RegisterResponseDto> RegisterClientAsync(RegisterRequestDto dto, string origin)
+        {
+            var response = await RegisterUserAsync(dto, Roles.Client.ToString(), true, false);
+
+            if (response.HasError || response.Id == null)
+            {
+                return response;
+            }
+
+            var user = await UserManager.FindByIdAsync(response.Id);
+
+            if (user != null)
+            {
+                var token = await UserManager.GenerateEmailConfirmationTokenAsync(user);
+                var verificationUri = $"{origin}/Login/ConfirmEmail?userId={user.Id}&token={Uri.EscapeDataString(token)}";
+
+                await _emailService.SendAsync(new EmailRequestDto
+                {
+                    To = dto.Email,
+                    Subject = "Activación de cuenta en RealEstateApp",
+                    HtmlBody = $"<p>Hola {dto.Name},</p>" +
+                        "<p>Su cuenta ha sido registrada correctamente en RealEstateApp.</p>" +
+                        "<p>Para activar su usuario y poder iniciar sesión, utilice el siguiente enlace:</p>" +
+                        $"<p><a href='{verificationUri}'>Activar mi cuenta</a></p>" +
+                        "<p>Si usted no realizó este registro, puede ignorar este mensaje.</p>"
+                });
+            }
+
+            return response;
+        }
+
+        public async Task<RegisterResponseDto> RegisterAgentAsync(RegisterRequestDto dto)
+        {
+            return await RegisterUserAsync(dto, Roles.Agent.ToString(), false, true);
+        }
+
+        public async Task<string?> ConfirmEmailAsync(string userId, string token)
+        {
+            var user = await UserManager.FindByIdAsync(userId);
+
+            if (user == null)
+            {
+                return null;
+            }
+
+            var result = await UserManager.ConfirmEmailAsync(user, token);
+
+            return result.Succeeded ? user.UserName : null;
+        }
+
+        public async Task SetProfileImageAsync(string userId, string imagePath)
+        {
+            var user = await UserManager.FindByIdAsync(userId);
+
+            if (user != null)
+            {
+                user.ProfileImage = imagePath;
+                await UserManager.UpdateAsync(user);
+            }
         }
     }
 }

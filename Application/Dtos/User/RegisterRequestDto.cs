@@ -20,7 +20,7 @@ namespace RealEstateApp.Core.Application.Dtos.User
         public string? Phone { get; set; }
 
         [Required(ErrorMessage = "Debe ingresar la cédula")]
-        public required string IdentityCard { get; set; }
+        public string? IdentityCard { get; set; }
 
         [Required(ErrorMessage = "Debe ingresar la contraseña")]
         public required string Password { get; set; }
