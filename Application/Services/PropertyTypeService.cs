@@ -10,15 +10,44 @@ namespace RealEstateApp.Core.Application.Services
     public class PropertyTypeService : GenericService<PropertyType, PropertyTypeDto>, IPropertyTypeService
     {
         private readonly IPropertyTypeRepository _propertyTypeRepository;
+        private readonly IPropertyRepository _propertyRepository;
 
-        public PropertyTypeService(IPropertyTypeRepository propertyTypeRepository, IMapper mapper) : base(propertyTypeRepository, mapper)
+        public PropertyTypeService(IPropertyTypeRepository propertyTypeRepository, IPropertyRepository propertyRepository, IMapper mapper)
+            : base(propertyTypeRepository, mapper)
         {
             _propertyTypeRepository = propertyTypeRepository;
+            _propertyRepository = propertyRepository;
         }
 
         public async Task<bool> ExistsByNameAsync(string name, int excludeId = 0)
         {
             return await _propertyTypeRepository.GetAllQuery().AnyAsync(pt => pt.Name == name && pt.Id != excludeId);
+        }
+
+        public override async Task<bool> DeleteAsync(int id)
+        {
+            var propertyType = await _propertyTypeRepository.GetById(id);
+
+            if (propertyType == null)
+            {
+                return false;
+            }
+
+            await _propertyRepository.ExecuteInTransactionAsync(async () =>
+            {
+                var properties = await _propertyRepository.GetAllQuery()
+                    .Where(p => p.PropertyTypeId == id)
+                    .ToListAsync();
+
+                foreach (var property in properties)
+                {
+                    await _propertyRepository.DeleteAsync(property.Id);
+                }
+
+                await _propertyTypeRepository.DeleteAsync(id);
+            });
+
+            return true;
         }
     }
 }
