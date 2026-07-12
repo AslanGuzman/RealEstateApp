@@ -1,3 +1,26 @@
+@model List<PropertyDto>
 @{
     ViewData["Title"] = "Inicio";
 }
+
+<div class="container">
+    <div class="page-header d-flex flex-wrap justify-content-between align-items-end gap-3">
+        <div>
+            <h1>Encuentra tu próxima propiedad</h1>
+            <p class="lead-soft">Explora las propiedades disponibles en toda República Dominicana</p>
+        </div>
+        <form method="get" asp-controller="Home" asp-action="Index" class="search-code">
+            <div class="input-group">
+                <input class="form-control" type="text" name="Code" placeholder="Buscar por código, ej. 123456" value="@Context.Request.Query["Code"]" />
+                <button class="btn btn-brand" type="submit">
+                    <svg class="icon"><use href="#i-search" /></svg>
+                    Buscar
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <partial name="_PropertyFilters" model="null" view-data="ViewData" />
+
+    <partial name="_PropertyGrid" model="Model" view-data="ViewData" />
+</div>

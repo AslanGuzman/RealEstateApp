@@ -1,0 +1,42 @@
+@model PropertyFilterViewModel?
+@{
+    var filterController = ViewData["FilterController"] as string ?? "Home";
+    var propertyTypes = ViewBag.PropertyTypes as List<RealEstateApp.Core.Application.Dtos.PropertyType.PropertyTypeDto> ?? [];
+}
+
+<div class="panel filter-panel mb-4">
+    <form method="get" asp-controller="@filterController" asp-action="Index">
+        <div class="row g-3 align-items-end">
+            <div class="col-6 col-md-3 col-lg-2">
+                <label class="form-label" for="PropertyTypeId">Tipo de propiedad</label>
+                <select class="form-select" id="PropertyTypeId" name="PropertyTypeId">
+                    <option value="">Todos</option>
+                    @foreach (var type in propertyTypes)
+                    {
+                        <option value="@type.Id" selected="@(Model?.PropertyTypeId == type.Id)">@type.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="col-6 col-md-3 col-lg-2">
+                <label class="form-label" for="MinPrice">Precio mínimo</label>
+                <input class="form-control" type="number" step="0.01" min="0" id="MinPrice" name="MinPrice" value="@Model?.MinPrice" />
+            </div>
+            <div class="col-6 col-md-3 col-lg-2">
+                <label class="form-label" for="MaxPrice">Precio máximo</label>
+                <input class="form-control" type="number" step="0.01" min="0" id="MaxPrice" name="MaxPrice" value="@Model?.MaxPrice" />
+            </div>
+            <div class="col-6 col-md-3 col-lg-2">
+                <label class="form-label" for="Rooms">Habitaciones</label>
+                <input class="form-control" type="number" min="0" id="Rooms" name="Rooms" value="@Model?.Rooms" />
+            </div>
+            <div class="col-6 col-md-3 col-lg-2">
+                <label class="form-label" for="Bathrooms">Baños</label>
+                <input class="form-control" type="number" min="0" id="Bathrooms" name="Bathrooms" value="@Model?.Bathrooms" />
+            </div>
+            <div class="col-6 col-md-3 col-lg-2 d-flex gap-2">
+                <button type="submit" class="btn btn-brand flex-fill">Filtrar</button>
+                <a class="btn btn-ghost" asp-controller="@filterController" asp-action="Index">Limpiar</a>
+            </div>
+        </div>
+    </form>
+</div>
