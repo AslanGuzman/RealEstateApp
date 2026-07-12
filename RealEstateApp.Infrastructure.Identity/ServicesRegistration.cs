@@ -150,6 +150,7 @@ namespace RealEstateApp.Infrastructure.Identity
             });
 
             services.AddHttpContextAccessor();
+            services.AddScoped<IAgentService, AgentService>();
         }
     }
 }
