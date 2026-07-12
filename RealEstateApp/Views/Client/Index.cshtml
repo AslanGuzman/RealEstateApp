@@ -1,0 +1,27 @@
+@model List<PropertyDto>
+@{
+    ViewData["Title"] = "Inicio";
+    ViewData["FilterController"] = "Client";
+}
+
+<div class="container">
+    <div class="page-header d-flex flex-wrap justify-content-between align-items-end gap-3">
+        <div>
+            <h1>Propiedades disponibles</h1>
+            <p class="lead-soft">Explora, filtra y encuentra tu próxima propiedad</p>
+        </div>
+        <form method="get" asp-controller="Client" asp-action="Index" class="search-code">
+            <div class="input-group">
+                <input class="form-control" type="text" name="Code" placeholder="Buscar por código, ej. 123456" value="@Context.Request.Query["Code"]" />
+                <button class="btn btn-brand" type="submit">
+                    <svg class="icon"><use href="#i-search" /></svg>
+                    Buscar
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <partial name="_PropertyFilters" model="null" view-data="ViewData" />
+
+    <partial name="_PropertyGrid" model="Model" view-data="ViewData" />
+</div>

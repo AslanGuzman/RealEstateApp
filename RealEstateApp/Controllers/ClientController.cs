@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RealEstateApp.Core.Application.Dtos.Property;
 using RealEstateApp.Core.Application.Interfaces;
@@ -6,17 +7,16 @@ using RealEstateApp.Core.Domain.Common.Enums;
 
 namespace RealEstateApp.Controllers
 {
-    public class HomeController : Controller
+    [Authorize(Roles = "Client")]
+    public class ClientController : Controller
     {
         private readonly IPropertyService _propertyService;
         private readonly IPropertyTypeService _propertyTypeService;
-        private readonly IAgentService _agentService;
 
-        public HomeController(IPropertyService propertyService, IPropertyTypeService propertyTypeService, IAgentService agentService)
+        public ClientController(IPropertyService propertyService, IPropertyTypeService propertyTypeService)
         {
             _propertyService = propertyService;
             _propertyTypeService = propertyTypeService;
-            _agentService = agentService;
         }
 
         public async Task<IActionResult> Index(PropertyFilterViewModel filters)
@@ -56,27 +56,6 @@ namespace RealEstateApp.Controllers
             }
 
             return View(properties);
-        }
-
-        public async Task<IActionResult> Detail(int id)
-        {
-            var property = await _propertyService.GetByIdWithDetailsAsync(id);
-
-            if (property == null || property.Status != PropertyStatus.Available)
-            {
-                ViewBag.EmptyMessage = "La propiedad solicitada no existe o no se encuentra disponible.";
-                return View(null);
-            }
-
-            ViewBag.AgentContact = await _agentService.GetAgentContactAsync(property.AgentId);
-
-            return View(property);
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new Models.ErrorViewModel { RequestId = System.Diagnostics.Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }
