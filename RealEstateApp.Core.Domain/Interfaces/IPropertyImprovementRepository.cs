@@ -4,5 +4,6 @@ namespace RealEstateApp.Core.Domain.Interfaces
 {
     public interface IPropertyImprovementRepository : IGenericRepository<PropertyImprovement>
     {
+        Task DeleteByPropertyAsync(int propertyId);
     }
 }
