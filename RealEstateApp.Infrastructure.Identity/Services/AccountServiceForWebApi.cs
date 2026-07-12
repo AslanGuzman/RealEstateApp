@@ -22,6 +22,11 @@ namespace RealEstateApp.Infrastructure.Identity.Services
             _jwtSettings = jwtSettings.Value;
         }
 
+        public async Task<RegisterResponseDto> RegisterAsync(RegisterRequestDto dto, string role)
+        {
+            return await RegisterUserAsync(dto, role, true, true);
+        }
+
         public async Task<LoginResponseForApiDto> AuthenticateAsync(LoginDto loginDto)
         {
             LoginResponseForApiDto response = new()
