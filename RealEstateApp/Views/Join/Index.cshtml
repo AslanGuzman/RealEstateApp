@@ -1,0 +1,82 @@
+@model RegisterUserViewModel?
+@{
+    ViewData["Title"] = "Únete a la app";
+}
+
+<div class="auth-wrap">
+    <div class="auth-card auth-card-wide">
+        <div class="text-center auth-brand">
+            <svg class="icon"><use href="#i-building" /></svg>
+        </div>
+        <h1 class="text-center mb-1">Únete a la app</h1>
+        <p class="text-center text-secondary mb-4">Crea tu cuenta como cliente o agente inmobiliario</p>
+
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger alert-app validation-summary-errors"></div>
+
+        <form method="post" asp-controller="Join" asp-action="Index" enctype="multipart/form-data">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="Name" class="form-label">Nombre</label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="field-validation-error"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="LastName" class="form-label">Apellido</label>
+                    <input asp-for="LastName" class="form-control" />
+                    <span asp-validation-for="LastName" class="field-validation-error"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Phone" class="form-label">Teléfono</label>
+                    <input asp-for="Phone" class="form-control" placeholder="809-555-0000" />
+                    <span asp-validation-for="Phone" class="field-validation-error"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Photo" class="form-label">Foto de usuario</label>
+                    <input asp-for="Photo" type="file" class="form-control" accept=".jpg,.jpeg,.png" />
+                    <span asp-validation-for="Photo" class="field-validation-error"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="UserName" class="form-label">Nombre de usuario</label>
+                    <input asp-for="UserName" class="form-control" />
+                    <span asp-validation-for="UserName" class="field-validation-error"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Email" class="form-label">Correo electrónico</label>
+                    <input asp-for="Email" type="email" class="form-control" />
+                    <span asp-validation-for="Email" class="field-validation-error"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Password" class="form-label">Contraseña</label>
+                    <input asp-for="Password" type="password" class="form-control" />
+                    <span asp-validation-for="Password" class="field-validation-error"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="ConfirmPassword" class="form-label">Confirmar contraseña</label>
+                    <input asp-for="ConfirmPassword" type="password" class="form-control" />
+                    <span asp-validation-for="ConfirmPassword" class="field-validation-error"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="UserType" class="form-label">Tipo de usuario</label>
+                    <select asp-for="UserType" class="form-select">
+                        <option value="">Seleccione una opción</option>
+                        <option value="@Roles.Client">Cliente</option>
+                        <option value="@Roles.Agent">Agente</option>
+                    </select>
+                    <span asp-validation-for="UserType" class="field-validation-error"></span>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-brand w-100 py-2 mt-4">Registrarse</button>
+        </form>
+
+        <p class="text-center text-secondary mt-4 mb-0">
+            ¿Ya tienes cuenta? <a class="text-decoration-none" asp-controller="Login" asp-action="Index">Iniciar sesión</a>
+        </p>
+        <p class="text-center mt-2 mb-0">
+            <a class="btn btn-ghost btn-sm" asp-controller="Home" asp-action="Index">Volver al inicio</a>
+        </p>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
