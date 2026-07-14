@@ -1,0 +1,18 @@
+@model RealEstateApp.Core.Application.Dtos.PropertyType.PropertyTypeDto
+@{
+    ViewData["Title"] = "Eliminar tipo de propiedad";
+}
+<div class="auth-wrap">
+    <div class="auth-card text-center">
+        <div class="auth-brand"><svg class="icon"><use href="#i-building" /></svg></div>
+        <h1>¿Está seguro que desea eliminar este tipo de propiedad?</h1>
+        <p class="text-secondary">@Model.Name — se eliminarán también las propiedades asociadas.</p>
+        <div class="d-flex justify-content-center gap-2 mt-3">
+            <form method="post" asp-action="DeleteConfirmed">
+                <input type="hidden" name="id" value="@Model.Id" />
+                <button type="submit" class="btn btn-brand">Aceptar</button>
+            </form>
+            <a class="btn btn-ghost" asp-action="Index">Cancelar</a>
+        </div>
+    </div>
+</div>

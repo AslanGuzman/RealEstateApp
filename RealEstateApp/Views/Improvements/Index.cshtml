@@ -1,0 +1,8 @@
+@using RealEstateApp.Core.Application.Dtos.Common
+@model List<CatalogItemDto>
+@{
+    ViewData["Title"] = "Mejoras";
+    ViewData["Lead"] = "Gestiona las mejoras que pueden asociarse a las propiedades";
+    ViewData["CreateText"] = "Crear mejora";
+}
+<partial name="_CatalogList" model="Model" view-data="ViewData" />

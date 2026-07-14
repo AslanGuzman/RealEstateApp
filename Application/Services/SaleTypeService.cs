@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using RealEstateApp.Core.Application.Dtos.Common;
 using RealEstateApp.Core.Application.Dtos.SaleType;
 using RealEstateApp.Core.Application.Interfaces;
 using RealEstateApp.Core.Domain.Entities;
@@ -22,6 +23,19 @@ namespace RealEstateApp.Core.Application.Services
         public async Task<bool> ExistsByNameAsync(string name, int excludeId = 0)
         {
             return await _saleTypeRepository.GetAllQuery().AnyAsync(st => st.Name == name && st.Id != excludeId);
+        }
+
+        public async Task<List<CatalogItemDto>> GetAllWithCountAsync()
+        {
+            return await _saleTypeRepository.GetAllQuery()
+                .Select(st => new CatalogItemDto
+                {
+                    Id = st.Id,
+                    Name = st.Name,
+                    Description = st.Description,
+                    PropertiesQuantity = st.Properties!.Count
+                })
+                .ToListAsync();
         }
 
         public override async Task<bool> DeleteAsync(int id)

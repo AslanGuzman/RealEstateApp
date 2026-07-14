@@ -1,0 +1,8 @@
+@using RealEstateApp.Core.Application.Dtos.Common
+@model List<CatalogItemDto>
+@{
+    ViewData["Title"] = "Tipos de propiedades";
+    ViewData["Lead"] = "Gestiona los tipos de propiedades del sistema";
+    ViewData["CreateText"] = "Crear tipo de propiedad";
+}
+<partial name="_CatalogList" model="Model" view-data="ViewData" />
