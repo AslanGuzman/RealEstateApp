@@ -1,14 +1,62 @@
+@using RealEstateApp.Core.Application.Dtos.Admin
+@model DashboardDto
 @{
-    ViewData["Title"] = "Panel de administración";
+    ViewData["Title"] = "Home del administrador";
+
+    var indicators = new (string Label, int Value, string Icon, string Tone)[]
+    {
+        ("Propiedades disponibles", Model.AvailableProperties, "i-building", "teal"),
+        ("Propiedades vendidas", Model.SoldProperties, "i-tag", "warm"),
+        ("Agentes activos", Model.ActiveAgents, "i-user", "teal"),
+        ("Agentes inactivos", Model.InactiveAgents, "i-user", "muted"),
+        ("Clientes activos", Model.ActiveClients, "i-user", "teal"),
+        ("Clientes inactivos", Model.InactiveClients, "i-user", "muted"),
+        ("Desarrolladores activos", Model.ActiveDevelopers, "i-user", "teal"),
+        ("Desarrolladores inactivos", Model.InactiveDevelopers, "i-user", "muted")
+    };
+
+    var modules = new (string Title, string Controller, string Icon)[]
+    {
+        ("Listado de los agentes", "AgentsAdmin", "i-user"),
+        ("Mantenimiento de administradores", "Administrators", "i-user"),
+        ("Mantenimiento de desarrolladores", "Developers", "i-user"),
+        ("Tipos de propiedades", "PropertyTypes", "i-building"),
+        ("Tipos de ventas", "SaleTypes", "i-tag"),
+        ("Mejoras", "Improvements", "i-check")
+    };
 }
 
 <div class="container">
     <div class="page-header">
         <h1>Panel de administración</h1>
-        <p class="lead-soft">Indicadores generales y mantenimientos del sistema</p>
+        <p class="lead-soft">Estado general del sistema</p>
     </div>
 
-    <div class="panel p-4">
-        <p class="text-secondary mb-0">Los indicadores y mantenimientos administrativos estarán disponibles en esta sección.</p>
+    <div class="row row-cols-2 row-cols-md-4 g-3">
+        @foreach (var indicator in indicators)
+        {
+            <div class="col">
+                <div class="stat-tile stat-@indicator.Tone">
+                    <div class="stat-icon"><svg class="icon"><use href="#@indicator.Icon" /></svg></div>
+                    <div class="stat-value">@indicator.Value</div>
+                    <div class="stat-label">@indicator.Label</div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <h2 class="section-title mt-5">Mantenimientos</h2>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+        @foreach (var module in modules)
+        {
+            <div class="col">
+                <a class="text-decoration-none" asp-controller="@module.Controller" asp-action="Index">
+                    <div class="module-card">
+                        <span class="module-icon"><svg class="icon"><use href="#@module.Icon" /></svg></span>
+                        <span class="module-title">@module.Title</span>
+                    </div>
+                </a>
+            </div>
+        }
     </div>
 </div>

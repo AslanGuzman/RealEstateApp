@@ -75,7 +75,19 @@
                             }
                             @if (User.IsInRole("Admin"))
                             {
-                                <li class="nav-item"><a class="nav-link" asp-controller="Admin" asp-action="Index">Home del administrador</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="Admin" asp-action="Index">Home</a></li>
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Mantenimientos</a>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" asp-controller="AgentsAdmin" asp-action="Index">Listado de los agentes</a></li>
+                                        <li><a class="dropdown-item" asp-controller="Administrators" asp-action="Index">Administradores</a></li>
+                                        <li><a class="dropdown-item" asp-controller="Developers" asp-action="Index">Desarrolladores</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item" asp-controller="PropertyTypes" asp-action="Index">Tipos de propiedades</a></li>
+                                        <li><a class="dropdown-item" asp-controller="SaleTypes" asp-action="Index">Tipos de ventas</a></li>
+                                        <li><a class="dropdown-item" asp-controller="Improvements" asp-action="Index">Mejoras</a></li>
+                                    </ul>
+                                </li>
                             }
                         }
                         else

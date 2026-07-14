@@ -1,14 +1,23 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RealEstateApp.Core.Application.Interfaces;
 
 namespace RealEstateApp.Controllers
 {
     [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
-        public IActionResult Index()
+        private readonly IUserAdminService _userAdminService;
+
+        public AdminController(IUserAdminService userAdminService)
         {
-            return View();
+            _userAdminService = userAdminService;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            var dashboard = await _userAdminService.GetDashboardAsync();
+            return View(dashboard);
         }
     }
 }
