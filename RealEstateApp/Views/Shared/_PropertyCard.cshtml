@@ -2,11 +2,14 @@
 @{
     var detailController = ViewData["DetailController"] as string ?? "Home";
     var culture = new CultureInfo("es-DO");
+    var favoriteIds = ViewData["FavoriteIds"] as HashSet<int>;
+    var showFavorite = favoriteIds != null;
+    var isFavorite = favoriteIds != null && favoriteIds.Contains(Model.Id);
 }
 
-<a class="text-decoration-none" asp-controller="@detailController" asp-action="Detail" asp-route-id="@Model.Id">
-    <article class="property-card">
-        <div class="cover">
+<article class="property-card">
+    <div class="cover">
+        <a asp-controller="@detailController" asp-action="Detail" asp-route-id="@Model.Id">
             @if (Model.Images.Count > 0)
             {
                 <img src="~/@Model.Images.First()" alt="Imagen de la propiedad @Model.Code" />
@@ -17,15 +20,26 @@
                     <svg class="icon"><use href="#i-building" /></svg>
                 </div>
             }
-            @if (!string.IsNullOrWhiteSpace(Model.SaleTypeName))
-            {
-                <span class="badge-sale">@Model.SaleTypeName</span>
-            }
-            @if (Model.Status == PropertyStatus.Sold)
-            {
-                <span class="badge-sold">Vendida</span>
-            }
-        </div>
+        </a>
+        @if (!string.IsNullOrWhiteSpace(Model.SaleTypeName))
+        {
+            <span class="badge-sale">@Model.SaleTypeName</span>
+        }
+        @if (Model.Status == PropertyStatus.Sold)
+        {
+            <span class="badge-sold">Vendida</span>
+        }
+        @if (showFavorite)
+        {
+            <form method="post" asp-controller="Client" asp-action="ToggleFavorite" class="fav-form">
+                <input type="hidden" name="propertyId" value="@Model.Id" />
+                <button type="submit" class="fav-btn @(isFavorite ? "is-fav" : "")" title="@(isFavorite ? "Quitar de favoritos" : "Agregar a favoritos")">
+                    <svg class="icon"><use href="#i-heart" /></svg>
+                </button>
+            </form>
+        }
+    </div>
+    <a class="text-decoration-none" asp-controller="@detailController" asp-action="Detail" asp-route-id="@Model.Id">
         <div class="body">
             <div class="d-flex justify-content-between align-items-center">
                 <span class="badge-type">@Model.PropertyTypeName</span>
@@ -38,5 +52,5 @@
                 <span><svg class="icon"><use href="#i-ruler" /></svg> @Model.LandSize.ToString("N0", culture) m²</span>
             </div>
         </div>
-    </article>
-</a>
+    </a>
+</article>

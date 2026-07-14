@@ -103,6 +103,20 @@
         </nav>
     </header>
 
+    @if (TempData["Toast"] != null || TempData["ToastError"] != null)
+    {
+        <div class="toast-stack">
+            @if (TempData["Toast"] != null)
+            {
+                <div class="app-toast">@TempData["Toast"]</div>
+            }
+            @if (TempData["ToastError"] != null)
+            {
+                <div class="app-toast is-error">@TempData["ToastError"]</div>
+            }
+        </div>
+    }
+
     <main role="main">
         @RenderBody()
     </main>

@@ -308,6 +308,68 @@ h1, h2, h3, h4, h5 {
   font-size: 0.78rem;
 }
 
+.fav-form {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  margin: 0;
+}
+
+.fav-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--ink-soft);
+  box-shadow: var(--shadow-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.15s ease, color 0.15s ease;
+}
+
+.fav-btn:hover {
+  transform: scale(1.1);
+  color: #e0245e;
+}
+
+.fav-btn.is-fav {
+  color: #e0245e;
+}
+
+.fav-btn .icon {
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
+.toast-stack {
+  position: fixed;
+  top: 78px;
+  right: 1rem;
+  z-index: 1080;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  max-width: 360px;
+}
+
+.app-toast {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--brand);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  padding: 0.85rem 1.1rem;
+  font-size: 0.92rem;
+  color: var(--ink);
+}
+
+.app-toast.is-error {
+  border-left-color: #b3261e;
+}
+
 .empty-state {
   text-align: center;
   padding: 4.5rem 1rem;

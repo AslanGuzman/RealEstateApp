@@ -4,6 +4,7 @@ using RealEstateApp.Core.Application.Dtos.Property;
 using RealEstateApp.Core.Application.Interfaces;
 using RealEstateApp.Core.Application.ViewModels.Property;
 using RealEstateApp.Core.Domain.Common.Enums;
+using System.Security.Claims;
 
 namespace RealEstateApp.Controllers
 {
@@ -12,16 +13,19 @@ namespace RealEstateApp.Controllers
     {
         private readonly IPropertyService _propertyService;
         private readonly IPropertyTypeService _propertyTypeService;
+        private readonly IFavoriteService _favoriteService;
 
-        public ClientController(IPropertyService propertyService, IPropertyTypeService propertyTypeService)
+        public ClientController(IPropertyService propertyService, IPropertyTypeService propertyTypeService, IFavoriteService favoriteService)
         {
             _propertyService = propertyService;
             _propertyTypeService = propertyTypeService;
+            _favoriteService = favoriteService;
         }
 
         public async Task<IActionResult> Index(PropertyFilterViewModel filters)
         {
             ViewBag.PropertyTypes = await _propertyTypeService.GetAll();
+            ViewData["FavoriteIds"] = await _favoriteService.GetFavoriteIdsAsync(ClientId());
 
             if (!ModelState.IsValid)
             {
@@ -56,6 +60,43 @@ namespace RealEstateApp.Controllers
             }
 
             return View(properties);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ToggleFavorite(int propertyId, string? returnUrl)
+        {
+            var added = await _favoriteService.ToggleAsync(ClientId(), propertyId);
+
+            TempData["Toast"] = added
+                ? "La propiedad fue agregada a sus favoritas correctamente."
+                : "La propiedad fue eliminada de sus favoritas correctamente.";
+
+            if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> Favorites()
+        {
+            var favorites = await _favoriteService.GetClientFavoritesAsync(ClientId(), new PropertyFilterDto { OnlyAvailable = true });
+
+            ViewData["FavoriteIds"] = await _favoriteService.GetFavoriteIdsAsync(ClientId());
+
+            if (favorites.Count == 0)
+            {
+                ViewBag.EmptyMessage = "No tiene propiedades favoritas disponibles en este momento.";
+            }
+
+            return View(favorites);
+        }
+
+        private string ClientId()
+        {
+            return User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "";
         }
     }
 }

@@ -1,0 +1,14 @@
+@model List<PropertyDto>
+@{
+    ViewData["Title"] = "Mis propiedades";
+    ViewData["DetailController"] = "Client";
+}
+
+<div class="container">
+    <div class="page-header">
+        <h1>Mis propiedades</h1>
+        <p class="lead-soft">Propiedades que has marcado como favoritas</p>
+    </div>
+
+    <partial name="_PropertyGrid" model="Model" view-data="ViewData" />
+</div>
