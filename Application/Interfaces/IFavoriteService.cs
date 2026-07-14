@@ -6,5 +6,6 @@ namespace RealEstateApp.Core.Application.Interfaces
     {
         Task<bool> ToggleAsync(string clientId, int propertyId);
         Task<List<PropertyDto>> GetClientFavoritesAsync(string clientId, PropertyFilterDto? filters = null);
+        Task<HashSet<int>> GetFavoriteIdsAsync(string clientId);
     }
 }

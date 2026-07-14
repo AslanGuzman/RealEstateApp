@@ -67,5 +67,27 @@ namespace RealEstateApp.Core.Application.Services
                 .Distinct()
                 .ToListAsync();
         }
+
+        public async Task<List<ConversationSummaryDto>> GetConversationSummariesAsync(int propertyId)
+        {
+            var messages = await _chatMessageRepository.GetAllQuery()
+                .Where(m => m.PropertyId == propertyId)
+                .ToListAsync();
+
+            return messages
+                .GroupBy(m => m.ClientId)
+                .Select(g =>
+                {
+                    var last = g.OrderByDescending(m => m.SentAt).First();
+                    return new ConversationSummaryDto
+                    {
+                        ClientId = g.Key,
+                        LastMessage = last.Content,
+                        LastDate = last.SentAt
+                    };
+                })
+                .OrderByDescending(c => c.LastDate)
+                .ToList();
+        }
     }
 }

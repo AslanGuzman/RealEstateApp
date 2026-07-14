@@ -9,5 +9,8 @@ namespace RealEstateApp.Core.Application.Interfaces
         Task<OperationResponseDto> AcceptOfferAsync(int offerId, string agentId);
         Task<OperationResponseDto> RejectOfferAsync(int offerId, string agentId);
         Task<List<OfferDto>> GetByPropertyAsync(int propertyId, string? clientId = null);
+        Task<List<OfferClientSummaryDto>> GetClientSummariesAsync(int propertyId);
+        Task<bool> HasPendingOfferAsync(int propertyId, string clientId);
+        Task<bool> HasAcceptedOfferAsync(int propertyId);
     }
 }

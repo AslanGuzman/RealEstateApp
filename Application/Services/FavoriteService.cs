@@ -47,5 +47,15 @@ namespace RealEstateApp.Core.Application.Services
 
             return properties.Where(p => favoriteIds.Contains(p.Id)).ToList();
         }
+
+        public async Task<HashSet<int>> GetFavoriteIdsAsync(string clientId)
+        {
+            var favoriteIds = await _favoritePropertyRepository.GetAllQuery()
+                .Where(f => f.ClientId == clientId)
+                .Select(f => f.PropertyId)
+                .ToListAsync();
+
+            return favoriteIds.ToHashSet();
+        }
     }
 }

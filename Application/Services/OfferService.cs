@@ -147,6 +147,41 @@ namespace RealEstateApp.Core.Application.Services
             return _mapper.Map<List<OfferDto>>(offers);
         }
 
+        public async Task<List<OfferClientSummaryDto>> GetClientSummariesAsync(int propertyId)
+        {
+            var offers = await _offerRepository.GetAllQuery()
+                .Where(o => o.PropertyId == propertyId)
+                .ToListAsync();
+
+            return offers
+                .GroupBy(o => o.ClientId)
+                .Select(g =>
+                {
+                    var last = g.OrderByDescending(o => o.OfferDate).First();
+                    return new OfferClientSummaryDto
+                    {
+                        ClientId = g.Key,
+                        OffersCount = g.Count(),
+                        LastAmount = last.Amount,
+                        LastStatus = last.Status
+                    };
+                })
+                .OrderByDescending(c => c.LastAmount)
+                .ToList();
+        }
+
+        public async Task<bool> HasPendingOfferAsync(int propertyId, string clientId)
+        {
+            return await _offerRepository.GetAllQuery()
+                .AnyAsync(o => o.PropertyId == propertyId && o.ClientId == clientId && o.Status == OfferStatus.Pending);
+        }
+
+        public async Task<bool> HasAcceptedOfferAsync(int propertyId)
+        {
+            return await _offerRepository.GetAllQuery()
+                .AnyAsync(o => o.PropertyId == propertyId && o.Status == OfferStatus.Accepted);
+        }
+
         private static OperationResponseDto Success()
         {
             return new OperationResponseDto();

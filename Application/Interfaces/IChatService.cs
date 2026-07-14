@@ -8,5 +8,6 @@ namespace RealEstateApp.Core.Application.Interfaces
         Task<OperationResponseDto> SendAsync(SaveChatMessageDto dto);
         Task<List<ChatMessageDto>> GetConversationAsync(int propertyId, string clientId);
         Task<List<string>> GetClientsWithConversationAsync(int propertyId);
+        Task<List<ConversationSummaryDto>> GetConversationSummariesAsync(int propertyId);
     }
 }
