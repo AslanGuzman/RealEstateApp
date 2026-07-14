@@ -1,0 +1,23 @@
+@using RealEstateApp.Core.Application.Dtos.User
+@model UserListDto
+@{
+    ViewData["Title"] = Model.IsActive ? "Inactivar agente" : "Activar agente";
+    var target = !Model.IsActive;
+}
+
+<div class="auth-wrap">
+    <div class="auth-card text-center">
+        <div class="auth-brand"><svg class="icon"><use href="#i-user" /></svg></div>
+        <h1>@(Model.IsActive ? "¿Está seguro que desea inactivar este agente?" : "¿Está seguro que desea activar este agente?")</h1>
+        <p class="text-secondary">@Model.Name @Model.LastName · @Model.Email</p>
+
+        <div class="d-flex justify-content-center gap-2 mt-3">
+            <form method="post" asp-action="ToggleStatusConfirmed">
+                <input type="hidden" name="id" value="@Model.Id" />
+                <input type="hidden" name="isActive" value="@target.ToString().ToLower()" />
+                <button type="submit" class="btn btn-brand">Aceptar</button>
+            </form>
+            <a class="btn btn-ghost" asp-action="Index">Cancelar</a>
+        </div>
+    </div>
+</div>
