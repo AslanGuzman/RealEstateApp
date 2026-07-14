@@ -1,0 +1,56 @@
+@using RealEstateApp.Core.Application.Dtos.User
+@model List<UserListDto>
+@{
+    ViewData["Title"] = "Mantenimiento de administradores";
+    var currentUserId = ViewBag.CurrentUserId as string;
+}
+
+<div class="container">
+    <div class="page-header d-flex flex-wrap justify-content-between align-items-end gap-3">
+        <div>
+            <h1>Mantenimiento de administradores</h1>
+            <p class="lead-soft">Gestiona los usuarios con rol Administrador</p>
+        </div>
+        <a class="btn btn-brand" asp-action="Create">Crear administrador</a>
+    </div>
+
+    <div class="panel p-0">
+        <table class="table mb-0 align-middle">
+            <thead>
+                <tr>
+                    <th class="ps-4">Nombre</th>
+                    <th>Usuario</th>
+                    <th>Cédula</th>
+                    <th>Correo</th>
+                    <th>Estado</th>
+                    <th class="text-end pe-4">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var admin in Model)
+                {
+                    <tr>
+                        <td class="ps-4 fw-semibold">@admin.Name @admin.LastName</td>
+                        <td>@admin.UserName</td>
+                        <td>@admin.IdentityCard</td>
+                        <td>@admin.Email</td>
+                        <td><span class="status-pill @(admin.IsActive ? "status-active" : "status-inactive")">@(admin.IsActive ? "Activo" : "Inactivo")</span></td>
+                        <td class="text-end pe-4">
+                            @if (admin.Id != currentUserId)
+                            {
+                                <div class="d-inline-flex gap-2">
+                                    <a class="btn btn-sm btn-outline-brand" asp-action="Edit" asp-route-id="@admin.Id">Editar</a>
+                                    <a class="btn btn-sm btn-ghost" asp-action="ToggleStatus" asp-route-id="@admin.Id">@(admin.IsActive ? "Inactivar" : "Activar")</a>
+                                </div>
+                            }
+                            else
+                            {
+                                <span class="text-secondary">Usuario actual</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
