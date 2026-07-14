@@ -63,16 +63,19 @@
                         {
                             @if (User.IsInRole("Client"))
                             {
-                                <li class="nav-item"><a class="nav-link" asp-controller="Client" asp-action="Index">Inicio</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="Client" asp-action="Index">Home</a></li>
                                 <li class="nav-item"><a class="nav-link" asp-controller="Agent" asp-action="Index">Agentes</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="Client" asp-action="Favorites">Mis propiedades</a></li>
                             }
                             @if (User.IsInRole("Agent"))
                             {
-                                <li class="nav-item"><a class="nav-link" asp-controller="AgentHome" asp-action="Index">Inicio</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="AgentHome" asp-action="Index">Home del agente</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="PropertyMaintenance" asp-action="Index">Mantenimiento de propiedades</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="Profile" asp-action="Index">Mi perfil</a></li>
                             }
                             @if (User.IsInRole("Admin"))
                             {
-                                <li class="nav-item"><a class="nav-link" asp-controller="Admin" asp-action="Index">Inicio</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="Admin" asp-action="Index">Home del administrador</a></li>
                             }
                         }
                         else

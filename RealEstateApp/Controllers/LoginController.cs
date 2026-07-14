@@ -66,7 +66,7 @@ namespace RealEstateApp.Controllers
         public async Task<IActionResult> Logout()
         {
             await _accountService.SignOutAsync();
-            return RedirectToAction("Index", "Login");
+            return RedirectToAction("Index", "Home");
         }
 
         public IActionResult AccessDenied()
