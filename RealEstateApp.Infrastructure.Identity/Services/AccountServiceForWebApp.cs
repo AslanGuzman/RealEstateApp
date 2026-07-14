@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using RealEstateApp.Core.Application.Dtos.Email;
 using RealEstateApp.Core.Application.Dtos.User;
 using RealEstateApp.Core.Application.Interfaces;
@@ -161,6 +162,52 @@ namespace RealEstateApp.Infrastructure.Identity.Services
                 user.ProfileImage = imagePath;
                 await UserManager.UpdateAsync(user);
             }
+        }
+
+        public async Task<Dictionary<string, string>> GetUserNamesAsync(List<string> userIds)
+        {
+            return await UserManager.Users
+                .Where(u => userIds.Contains(u.Id))
+                .ToDictionaryAsync(u => u.Id, u => $"{u.Name} {u.LastName}");
+        }
+
+        public async Task<UserProfileDto?> GetUserProfileAsync(string userId)
+        {
+            var user = await UserManager.FindByIdAsync(userId);
+
+            if (user == null)
+            {
+                return null;
+            }
+
+            return new UserProfileDto
+            {
+                Name = user.Name,
+                LastName = user.LastName,
+                Phone = user.PhoneNumber,
+                ProfileImage = user.ProfileImage
+            };
+        }
+
+        public async Task UpdateUserProfileAsync(string userId, UserProfileDto dto)
+        {
+            var user = await UserManager.FindByIdAsync(userId);
+
+            if (user == null)
+            {
+                return;
+            }
+
+            user.Name = dto.Name;
+            user.LastName = dto.LastName;
+            user.PhoneNumber = dto.Phone;
+
+            if (!string.IsNullOrWhiteSpace(dto.ProfileImage))
+            {
+                user.ProfileImage = dto.ProfileImage;
+            }
+
+            await UserManager.UpdateAsync(user);
         }
     }
 }
