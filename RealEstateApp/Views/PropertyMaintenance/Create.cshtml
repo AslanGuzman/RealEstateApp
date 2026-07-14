@@ -1,0 +1,19 @@
+@model SavePropertyViewModel
+@{
+    ViewData["Title"] = "Crear propiedad";
+}
+
+<div class="container">
+    <div class="page-header">
+        <h1>Crear propiedad</h1>
+        <p class="lead-soft">Registra una nueva propiedad disponible</p>
+    </div>
+
+    <div class="panel p-4">
+        <partial name="_PropertyForm" model="Model" />
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

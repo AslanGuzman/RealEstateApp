@@ -623,6 +623,31 @@ h1, h2, h3, h4, h5 {
   vertical-align: middle;
 }
 
+.maint-thumb {
+  width: 64px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+}
+
+.maint-thumb-empty {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--brand-soft);
+  color: var(--brand);
+}
+
+.maint-thumb-lg {
+  width: 110px;
+  height: 82px;
+}
+
+.table > :not(caption) > * > * {
+  padding: 0.85rem 0.75rem;
+}
+
 .validation-summary-errors ul {
   margin: 0;
   padding-left: 1.1rem;
