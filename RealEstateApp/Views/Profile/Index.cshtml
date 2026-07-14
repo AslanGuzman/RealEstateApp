@@ -1,0 +1,65 @@
+@model UserProfileViewModel
+@{
+    ViewData["Title"] = "Mi perfil";
+}
+
+<div class="container">
+    <div class="page-header">
+        <h1>Mi perfil</h1>
+        <p class="lead-soft">Actualiza tus datos de contacto y tu foto</p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="panel p-4">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger alert-app validation-summary-errors"></div>
+
+                <div class="text-center mb-4">
+                    @if (!string.IsNullOrWhiteSpace(Model.CurrentImage))
+                    {
+                        <img class="avatar" src="~/@Model.CurrentImage" alt="Foto de perfil" />
+                    }
+                    else
+                    {
+                        <span class="avatar-empty"><svg class="icon"><use href="#i-user" /></svg></span>
+                    }
+                </div>
+
+                <form method="post" enctype="multipart/form-data">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="Name" class="form-label">Nombre</label>
+                            <input asp-for="Name" class="form-control" />
+                            <span asp-validation-for="Name" class="field-validation-error"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="LastName" class="form-label">Apellido</label>
+                            <input asp-for="LastName" class="form-control" />
+                            <span asp-validation-for="LastName" class="field-validation-error"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Phone" class="form-label">Teléfono</label>
+                            <input asp-for="Phone" class="form-control" />
+                            <span asp-validation-for="Phone" class="field-validation-error"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Photo" class="form-label">Foto de usuario (opcional)</label>
+                            <input asp-for="Photo" type="file" class="form-control" accept=".jpg,.jpeg,.png" />
+                            <span asp-validation-for="Photo" class="field-validation-error"></span>
+                        </div>
+                    </div>
+                    <input type="hidden" asp-for="CurrentImage" />
+
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-brand">Guardar cambios</button>
+                        <a class="btn btn-ghost" asp-controller="AgentHome" asp-action="Index">Volver atrás</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
