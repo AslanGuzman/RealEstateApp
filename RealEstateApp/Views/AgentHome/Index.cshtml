@@ -1,12 +1,16 @@
 @model List<PropertyDto>
 @{
-    ViewData["Title"] = "Mis propiedades";
+    ViewData["Title"] = "Home del agente";
+    ViewData["DetailController"] = "AgentHome";
 }
 
 <div class="container">
-    <div class="page-header">
-        <h1>Mis propiedades</h1>
-        <p class="lead-soft">Propiedades que has registrado, incluidas las vendidas</p>
+    <div class="page-header d-flex flex-wrap justify-content-between align-items-end gap-3">
+        <div>
+            <h1>Mis propiedades</h1>
+            <p class="lead-soft">Propiedades que has registrado, incluidas las vendidas</p>
+        </div>
+        <a class="btn btn-brand" asp-controller="PropertyMaintenance" asp-action="Index">Mantenimiento de propiedades</a>
     </div>
 
     <partial name="_PropertyGrid" model="Model" view-data="ViewData" />

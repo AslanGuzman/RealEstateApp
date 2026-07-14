@@ -1,0 +1,145 @@
+@using RealEstateApp.Core.Application.Dtos.Chat
+@using RealEstateApp.Core.Application.Dtos.Offer
+@model PropertyDto
+@{
+    ViewData["Title"] = $"Propiedad {Model.Code}";
+    var culture = new CultureInfo("es-DO");
+    var conversations = ViewBag.Conversations as List<ConversationSummaryDto> ?? [];
+    var offerSummaries = ViewBag.OfferSummaries as List<OfferClientSummaryDto> ?? [];
+    var isSold = Model.Status == PropertyStatus.Sold;
+
+    string StatusBadge(OfferStatus status) => status switch
+    {
+        OfferStatus.Accepted => "text-bg-success",
+        OfferStatus.Rejected => "text-bg-danger",
+        _ => "text-bg-warning"
+    };
+
+    string StatusText(OfferStatus status) => status switch
+    {
+        OfferStatus.Accepted => "Aceptada",
+        OfferStatus.Rejected => "Rechazada",
+        _ => "Pendiente"
+    };
+}
+
+<div class="container py-4">
+    <nav aria-label="breadcrumb" class="pt-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a class="text-decoration-none" asp-controller="AgentHome" asp-action="Index">Mis propiedades</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Propiedad @Model.Code</li>
+        </ol>
+    </nav>
+
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div id="galeriaPropiedad" class="carousel slide detail-gallery" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    @if (Model.Images.Count == 0)
+                    {
+                        <div class="carousel-item active">
+                            <div class="d-flex align-items-center justify-content-center h-100 text-secondary">
+                                <svg class="icon" style="width:4rem;height:4rem"><use href="#i-building" /></svg>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        @for (var i = 0; i < Model.Images.Count; i++)
+                        {
+                            <div class="carousel-item @(i == 0 ? "active" : "")">
+                                <img src="~/@Model.Images[i]" alt="Imagen @(i + 1)" />
+                            </div>
+                        }
+                    }
+                </div>
+                @if (Model.Images.Count > 1)
+                {
+                    <button class="carousel-control-prev" type="button" data-bs-target="#galeriaPropiedad" data-bs-slide="prev"><span class="carousel-control-prev-icon"></span></button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#galeriaPropiedad" data-bs-slide="next"><span class="carousel-control-next-icon"></span></button>
+                }
+            </div>
+
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-4">
+                <div>
+                    <span class="badge-type">@Model.PropertyTypeName</span>
+                    <span class="badge-type">@Model.SaleTypeName</span>
+                    @if (isSold)
+                    {
+                        <span class="badge-sold position-static d-inline-block">Vendida</span>
+                    }
+                </div>
+                <span class="code text-secondary">Código @Model.Code</span>
+            </div>
+
+            <h1 class="mt-2">@Model.Price.ToString("C0", culture)</h1>
+
+            <div class="detail-facts mt-3">
+                <div class="fact"><span class="fact-label">Habitaciones</span><span class="fact-value">@Model.Rooms</span></div>
+                <div class="fact"><span class="fact-label">Baños</span><span class="fact-value">@Model.Bathrooms</span></div>
+                <div class="fact"><span class="fact-label">Tamaño</span><span class="fact-value">@Model.LandSize.ToString("N0", culture) m²</span></div>
+            </div>
+
+            <h2 class="section-title mt-4">Descripción</h2>
+            <p class="text-secondary">@Model.Description</p>
+
+            <h2 class="section-title mt-4">Mejoras</h2>
+            <div>
+                @foreach (var improvement in Model.Improvements)
+                {
+                    <span class="improvement-chip"><svg class="icon"><use href="#i-check" /></svg> @improvement.Name</span>
+                }
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="panel p-4 mb-4">
+                <h2 class="section-title">Conversaciones</h2>
+                @if (conversations.Count == 0)
+                {
+                    <p class="text-secondary mb-0">Ningún cliente ha iniciado una conversación sobre esta propiedad.</p>
+                }
+                else
+                {
+                    <div class="list-group list-group-flush">
+                        @foreach (var conversation in conversations)
+                        {
+                            <a class="list-group-item list-group-item-action px-0" asp-controller="AgentHome" asp-action="Conversation" asp-route-propertyId="@Model.Id" asp-route-clientId="@conversation.ClientId">
+                                <div class="d-flex justify-content-between">
+                                    <span class="fw-semibold">@conversation.ClientName</span>
+                                    <small class="text-secondary">@conversation.LastDate.ToString("dd/MM HH:mm")</small>
+                                </div>
+                                <small class="text-secondary text-truncate d-block">@conversation.LastMessage</small>
+                            </a>
+                        }
+                    </div>
+                }
+            </div>
+
+            <div class="panel p-4">
+                <h2 class="section-title">Ofertas recibidas</h2>
+                @if (offerSummaries.Count == 0)
+                {
+                    <p class="text-secondary mb-0">Aún no se han recibido ofertas sobre esta propiedad.</p>
+                }
+                else
+                {
+                    <div class="list-group list-group-flush">
+                        @foreach (var summary in offerSummaries)
+                        {
+                            <a class="list-group-item list-group-item-action px-0" asp-controller="AgentHome" asp-action="Offers" asp-route-propertyId="@Model.Id" asp-route-clientId="@summary.ClientId">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="fw-semibold">@summary.ClientName</span>
+                                        <small class="text-secondary d-block">@summary.OffersCount oferta(s) · última @summary.LastAmount.ToString("C0", culture)</small>
+                                    </div>
+                                    <span class="badge @StatusBadge(summary.LastStatus)">@StatusText(summary.LastStatus)</span>
+                                </div>
+                            </a>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

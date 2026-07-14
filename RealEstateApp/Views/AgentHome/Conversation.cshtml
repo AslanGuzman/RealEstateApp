@@ -1,0 +1,54 @@
+@using RealEstateApp.Core.Application.Dtos.Chat
+@{
+    var property = ViewBag.Property as PropertyDto;
+    var messages = ViewBag.Messages as List<ChatMessageDto> ?? [];
+    var clientId = ViewBag.ClientId as string;
+    ViewData["Title"] = "Conversación";
+}
+
+<div class="container py-4">
+    <nav aria-label="breadcrumb" class="pt-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a class="text-decoration-none" asp-controller="AgentHome" asp-action="Index">Mis propiedades</a></li>
+            <li class="breadcrumb-item"><a class="text-decoration-none" asp-controller="AgentHome" asp-action="Detail" asp-route-id="@property?.Id">Propiedad @property?.Code</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@ViewBag.ClientName</li>
+        </ol>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="page-header pt-2">
+                <h1>Conversación con @ViewBag.ClientName</h1>
+                <p class="lead-soft">Propiedad @property?.Code</p>
+            </div>
+
+            <div class="panel p-3 mb-3 chat-box">
+                @if (messages.Count == 0)
+                {
+                    <p class="text-secondary text-center mb-0 py-3">No hay mensajes en esta conversación.</p>
+                }
+                else
+                {
+                    @foreach (var message in messages)
+                    {
+                        <div class="chat-msg @(message.SenderRole == Roles.Agent ? "mine" : "theirs")">
+                            <div class="chat-bubble">
+                                <p class="mb-1">@message.Content</p>
+                                <span class="chat-time">@message.SentAt.ToString("dd/MM/yyyy HH:mm")</span>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+
+            <form method="post" asp-controller="AgentHome" asp-action="Reply">
+                <input type="hidden" name="PropertyId" value="@property?.Id" />
+                <input type="hidden" name="ClientId" value="@clientId" />
+                <div class="input-group">
+                    <input class="form-control" name="Content" placeholder="Escriba una respuesta para el cliente" />
+                    <button class="btn btn-brand" type="submit">Enviar respuesta</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
