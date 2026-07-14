@@ -1,0 +1,19 @@
+@model SaveUserViewModel
+@{
+    ViewData["Title"] = "Editar desarrollador";
+}
+
+<div class="container">
+    <div class="page-header">
+        <h1>Editar desarrollador</h1>
+        <p class="lead-soft">Actualiza los datos del desarrollador</p>
+    </div>
+
+    <div class="panel p-4">
+        <partial name="_UserForm" model="Model" />
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
