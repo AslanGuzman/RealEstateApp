@@ -141,6 +141,7 @@ namespace RealEstateApp.Infrastructure.Identity
             services.AddIdentityCore<AppUser>()
                 .AddRoles<IdentityRole>()
                 .AddSignInManager()
+                .AddErrorDescriber<SpanishIdentityErrorDescriber>()
                 .AddEntityFrameworkStores<IdentityContext>()
                 .AddTokenProvider<DataProtectorTokenProvider<AppUser>>(TokenOptions.DefaultProvider);
 
