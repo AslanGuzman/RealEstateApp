@@ -2,40 +2,66 @@
 @{
     var filterController = ViewData["FilterController"] as string ?? "Home";
     var propertyTypes = ViewBag.PropertyTypes as List<RealEstateApp.Core.Application.Dtos.PropertyType.PropertyTypeDto> ?? [];
+    var query = Context.Request.Query;
+
+    string Current(string key, string? fallback) => string.IsNullOrWhiteSpace(query[key].ToString()) ? fallback ?? "" : query[key].ToString();
+
+    var selectedType = Current("PropertyTypeId", Model?.PropertyTypeId?.ToString());
+    var minPrice = Current("MinPrice", Model?.MinPrice?.ToString(CultureInfo.InvariantCulture));
+    var maxPrice = Current("MaxPrice", Model?.MaxPrice?.ToString(CultureInfo.InvariantCulture));
+    var rooms = Current("Rooms", Model?.Rooms?.ToString());
+    var bathrooms = Current("Bathrooms", Model?.Bathrooms?.ToString());
+    var filterErrors = ViewData.ModelState.Values
+        .SelectMany(state => state.Errors)
+        .Select(error => error.ErrorMessage)
+        .Where(message => !string.IsNullOrWhiteSpace(message))
+        .Distinct()
+        .ToList();
 }
 
 <div class="panel filter-panel mb-4">
+    @if (filterErrors.Count > 0)
+    {
+        <div class="alert alert-danger alert-app validation-summary-errors">
+            <ul>
+                @foreach (var message in filterErrors)
+                {
+                    <li>@message</li>
+                }
+            </ul>
+        </div>
+    }
     <form method="get" asp-controller="@filterController" asp-action="Index">
         <div class="row g-3 align-items-end">
-            <div class="col-6 col-md-3 col-lg-2">
+            <div class="col-6 col-md-4 col-lg-3">
                 <label class="form-label" for="PropertyTypeId">Tipo de propiedad</label>
                 <select class="form-select" id="PropertyTypeId" name="PropertyTypeId">
                     <option value="">Todos</option>
                     @foreach (var type in propertyTypes)
                     {
-                        <option value="@type.Id" selected="@(Model?.PropertyTypeId == type.Id)">@type.Name</option>
+                        <option value="@type.Id" selected="@(selectedType == type.Id.ToString())">@type.Name</option>
                     }
                 </select>
             </div>
-            <div class="col-6 col-md-3 col-lg-2">
+            <div class="col-6 col-md-4 col-lg-2">
                 <label class="form-label" for="MinPrice">Precio mínimo</label>
-                <input class="form-control" type="number" step="0.01" min="0" id="MinPrice" name="MinPrice" value="@Model?.MinPrice" />
+                <input class="form-control" type="number" step="0.01" min="0" id="MinPrice" name="MinPrice" value="@minPrice" placeholder="0" />
             </div>
-            <div class="col-6 col-md-3 col-lg-2">
+            <div class="col-6 col-md-4 col-lg-2">
                 <label class="form-label" for="MaxPrice">Precio máximo</label>
-                <input class="form-control" type="number" step="0.01" min="0" id="MaxPrice" name="MaxPrice" value="@Model?.MaxPrice" />
+                <input class="form-control" type="number" step="0.01" min="0" id="MaxPrice" name="MaxPrice" value="@maxPrice" placeholder="Sin límite" />
             </div>
-            <div class="col-6 col-md-3 col-lg-2">
+            <div class="col-6 col-md-4 col-lg-2">
                 <label class="form-label" for="Rooms">Habitaciones</label>
-                <input class="form-control" type="number" min="0" id="Rooms" name="Rooms" value="@Model?.Rooms" />
+                <input class="form-control" type="number" min="0" id="Rooms" name="Rooms" value="@rooms" placeholder="Cualquiera" />
             </div>
-            <div class="col-6 col-md-3 col-lg-2">
+            <div class="col-6 col-md-4 col-lg-2">
                 <label class="form-label" for="Bathrooms">Baños</label>
-                <input class="form-control" type="number" min="0" id="Bathrooms" name="Bathrooms" value="@Model?.Bathrooms" />
+                <input class="form-control" type="number" min="0" id="Bathrooms" name="Bathrooms" value="@bathrooms" placeholder="Cualquiera" />
             </div>
-            <div class="col-6 col-md-3 col-lg-2 d-flex gap-2">
+            <div class="col-12 col-lg-3 d-flex gap-2">
                 <button type="submit" class="btn btn-brand flex-fill">Filtrar</button>
-                <a class="btn btn-ghost" asp-controller="@filterController" asp-action="Index">Limpiar</a>
+                <a class="btn btn-ghost" asp-controller="@filterController" asp-action="Index">Limpiar filtros</a>
             </div>
         </div>
     </form>

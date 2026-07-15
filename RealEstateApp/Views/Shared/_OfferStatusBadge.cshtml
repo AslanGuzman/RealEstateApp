@@ -1,0 +1,18 @@
+@model OfferStatus
+@{
+    var tone = Model switch
+    {
+        OfferStatus.Accepted => "text-bg-success",
+        OfferStatus.Rejected => "text-bg-danger",
+        _ => "text-bg-warning"
+    };
+
+    var text = Model switch
+    {
+        OfferStatus.Accepted => "Aceptada",
+        OfferStatus.Rejected => "Rechazada",
+        _ => "Pendiente"
+    };
+}
+
+<span class="badge @tone">@text</span>

@@ -32,8 +32,23 @@
         <p class="lead-soft">Estado general del sistema</p>
     </div>
 
-    <div class="row row-cols-2 row-cols-md-4 g-3">
-        @foreach (var indicator in indicators)
+    <h2 class="section-title">Propiedades</h2>
+    <div class="row row-cols-2 row-cols-md-4 g-3 mb-5">
+        @foreach (var indicator in indicators.Take(2))
+        {
+            <div class="col">
+                <div class="stat-tile stat-@indicator.Tone">
+                    <div class="stat-icon"><svg class="icon"><use href="#@indicator.Icon" /></svg></div>
+                    <div class="stat-value">@indicator.Value</div>
+                    <div class="stat-label">@indicator.Label</div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <h2 class="section-title">Usuarios</h2>
+    <div class="row row-cols-2 row-cols-md-3 row-cols-xl-6 g-3">
+        @foreach (var indicator in indicators.Skip(2))
         {
             <div class="col">
                 <div class="stat-tile stat-@indicator.Tone">

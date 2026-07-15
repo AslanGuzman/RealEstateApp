@@ -22,10 +22,10 @@
                 <p class="lead-soft">Propiedad @property?.Code</p>
             </div>
 
-            <div class="panel p-3 mb-3 chat-box">
+            <div class="panel p-3 mb-3 chat-box" data-chat-scroll>
                 @if (messages.Count == 0)
                 {
-                    <p class="text-secondary text-center mb-0 py-3">No hay mensajes en esta conversación.</p>
+                    <p class="chat-empty mb-0 py-3">No hay mensajes en esta conversación.</p>
                 }
                 else
                 {

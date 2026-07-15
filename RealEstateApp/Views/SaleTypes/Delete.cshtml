@@ -1,18 +1,15 @@
 @model RealEstateApp.Core.Application.Dtos.SaleType.SaleTypeDto
 @{
     ViewData["Title"] = "Eliminar tipo de venta";
+    ViewData["ConfirmIcon"] = "i-tag";
+    ViewData["ConfirmHeading"] = "¿Está seguro que desea eliminar este tipo de venta?";
+    ViewData["ConfirmSubtitle"] = Model.Name;
+    ViewData["ConfirmNote"] = "Se eliminarán también las propiedades asociadas con sus imágenes, mejoras, ofertas, mensajes y favoritos. Esta acción no se puede deshacer.";
+    ViewData["ConfirmAction"] = "DeleteConfirmed";
+    ViewData["ConfirmController"] = "SaleTypes";
+    ViewData["ConfirmId"] = Model.Id;
+    ViewData["ConfirmButtonText"] = "Eliminar";
+    ViewData["ConfirmDanger"] = true;
 }
-<div class="auth-wrap">
-    <div class="auth-card text-center">
-        <div class="auth-brand"><svg class="icon"><use href="#i-tag" /></svg></div>
-        <h1>¿Está seguro que desea eliminar este tipo de venta?</h1>
-        <p class="text-secondary">@Model.Name — se eliminarán también las propiedades asociadas.</p>
-        <div class="d-flex justify-content-center gap-2 mt-3">
-            <form method="post" asp-action="DeleteConfirmed">
-                <input type="hidden" name="id" value="@Model.Id" />
-                <button type="submit" class="btn btn-brand">Aceptar</button>
-            </form>
-            <a class="btn btn-ghost" asp-action="Index">Cancelar</a>
-        </div>
-    </div>
-</div>
+
+<partial name="_ConfirmPanel" view-data="ViewData" />

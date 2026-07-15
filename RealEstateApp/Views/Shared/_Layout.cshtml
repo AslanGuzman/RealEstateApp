@@ -47,6 +47,20 @@
         </symbol>
     </svg>
 
+    @{
+        var currentController = ViewContext.RouteData.Values["controller"] as string;
+        var currentAction = ViewContext.RouteData.Values["action"] as string;
+        var userName = User.Identity?.Name ?? "";
+        var initials = string.Join("", userName.Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(2).Select(part => char.ToUpperInvariant(part[0])));
+        var roleName = User.IsInRole("Admin") ? "Administrador" : User.IsInRole("Agent") ? "Agente" : User.IsInRole("Client") ? "Cliente" : "";
+
+        string NavState(string controller, string? action = null) =>
+            currentController == controller && (action == null || currentAction == action) ? "nav-link active" : "nav-link";
+
+        string MenuState(params string[] controllers) =>
+            controllers.Contains(currentController) ? "nav-link dropdown-toggle active" : "nav-link dropdown-toggle";
+    }
+
     <header>
         <nav class="navbar navbar-expand-md navbar-app sticky-top">
             <div class="container">
@@ -63,21 +77,21 @@
                         {
                             @if (User.IsInRole("Client"))
                             {
-                                <li class="nav-item"><a class="nav-link" asp-controller="Client" asp-action="Index">Home</a></li>
-                                <li class="nav-item"><a class="nav-link" asp-controller="Agent" asp-action="Index">Agentes</a></li>
-                                <li class="nav-item"><a class="nav-link" asp-controller="Client" asp-action="Favorites">Mis propiedades</a></li>
+                                <li class="nav-item"><a class="@NavState("Client", "Index")" asp-controller="Client" asp-action="Index">Home</a></li>
+                                <li class="nav-item"><a class="@NavState("Agent")" asp-controller="Agent" asp-action="Index">Agentes</a></li>
+                                <li class="nav-item"><a class="@NavState("Client", "Favorites")" asp-controller="Client" asp-action="Favorites">Mis propiedades</a></li>
                             }
                             @if (User.IsInRole("Agent"))
                             {
-                                <li class="nav-item"><a class="nav-link" asp-controller="AgentHome" asp-action="Index">Home del agente</a></li>
-                                <li class="nav-item"><a class="nav-link" asp-controller="PropertyMaintenance" asp-action="Index">Mantenimiento de propiedades</a></li>
-                                <li class="nav-item"><a class="nav-link" asp-controller="Profile" asp-action="Index">Mi perfil</a></li>
+                                <li class="nav-item"><a class="@NavState("AgentHome")" asp-controller="AgentHome" asp-action="Index">Home del agente</a></li>
+                                <li class="nav-item"><a class="@NavState("PropertyMaintenance")" asp-controller="PropertyMaintenance" asp-action="Index">Mantenimiento de propiedades</a></li>
+                                <li class="nav-item"><a class="@NavState("Profile")" asp-controller="Profile" asp-action="Index">Mi perfil</a></li>
                             }
                             @if (User.IsInRole("Admin"))
                             {
-                                <li class="nav-item"><a class="nav-link" asp-controller="Admin" asp-action="Index">Home</a></li>
+                                <li class="nav-item"><a class="@NavState("Admin")" asp-controller="Admin" asp-action="Index">Home</a></li>
                                 <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Mantenimientos</a>
+                                    <a class="@MenuState("AgentsAdmin", "Administrators", "Developers", "PropertyTypes", "SaleTypes", "Improvements")" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Mantenimientos</a>
                                     <ul class="dropdown-menu">
                                         <li><a class="dropdown-item" asp-controller="AgentsAdmin" asp-action="Index">Listado de los agentes</a></li>
                                         <li><a class="dropdown-item" asp-controller="Administrators" asp-action="Index">Administradores</a></li>
@@ -92,21 +106,40 @@
                         }
                         else
                         {
-                            <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">Inicio</a></li>
-                            <li class="nav-item"><a class="nav-link" asp-controller="Agent" asp-action="Index">Agentes</a></li>
-                            <li class="nav-item"><a class="nav-link" asp-controller="Join" asp-action="Index">Únete a la app</a></li>
+                            <li class="nav-item"><a class="@NavState("Home")" asp-controller="Home" asp-action="Index">Inicio</a></li>
+                            <li class="nav-item"><a class="@NavState("Agent")" asp-controller="Agent" asp-action="Index">Agentes</a></li>
+                            <li class="nav-item"><a class="@NavState("Join")" asp-controller="Join" asp-action="Index">Únete a la app</a></li>
                         }
                     </ul>
                     <div class="d-flex align-items-center gap-2">
                         @if (User.Identity != null && User.Identity.IsAuthenticated)
                         {
-                            <span class="user-chip">
-                                <svg class="icon"><use href="#i-user" /></svg>
-                                @User.Identity.Name
-                            </span>
-                            <form asp-controller="Login" asp-action="Logout" method="post" class="d-inline">
-                                <button type="submit" class="btn btn-ghost">Cerrar sesión</button>
-                            </form>
+                            <div class="dropdown user-menu">
+                                <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Menú de usuario">
+                                    <span class="avatar-initials">@initials</span>
+                                    @userName
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li class="dropdown-header">
+                                        <div class="dropdown-name">@userName</div>
+                                        <div class="dropdown-role">@roleName</div>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    @if (User.IsInRole("Agent"))
+                                    {
+                                        <li><a class="dropdown-item" asp-controller="Profile" asp-action="Index">Mi perfil</a></li>
+                                    }
+                                    @if (User.IsInRole("Client"))
+                                    {
+                                        <li><a class="dropdown-item" asp-controller="Client" asp-action="Favorites">Mis propiedades</a></li>
+                                    }
+                                    <li>
+                                        <form asp-controller="Login" asp-action="Logout" method="post">
+                                            <button type="submit" class="dropdown-item logout-item">Cerrar sesión</button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
                         }
                         else
                         {

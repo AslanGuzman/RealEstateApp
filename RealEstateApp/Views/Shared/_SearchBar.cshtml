@@ -1,0 +1,21 @@
+@{
+    var searchController = ViewData["SearchController"] as string ?? "Home";
+    var fieldName = ViewData["SearchField"] as string ?? "Code";
+    var placeholder = ViewData["SearchPlaceholder"] as string ?? "Buscar por código, ej. 123456";
+    var hint = ViewData["SearchHint"] as string;
+    var currentValue = Context.Request.Query[fieldName].ToString();
+}
+
+<form method="get" asp-controller="@searchController" asp-action="Index" class="search-bar">
+    <div class="input-group">
+        <input class="form-control" type="text" name="@fieldName" value="@currentValue" placeholder="@placeholder" aria-label="@placeholder" />
+        <button class="btn btn-brand" type="submit">
+            <svg class="icon"><use href="#i-search" /></svg>
+            Buscar
+        </button>
+    </div>
+    @if (!string.IsNullOrWhiteSpace(hint))
+    {
+        <p class="search-hint">@hint</p>
+    }
+</form>

@@ -4,20 +4,6 @@
     var offers = ViewBag.Offers as List<OfferDto> ?? [];
     var culture = new CultureInfo("es-DO");
     ViewData["Title"] = "Ofertas del cliente";
-
-    string StatusBadge(OfferStatus status) => status switch
-    {
-        OfferStatus.Accepted => "text-bg-success",
-        OfferStatus.Rejected => "text-bg-danger",
-        _ => "text-bg-warning"
-    };
-
-    string StatusText(OfferStatus status) => status switch
-    {
-        OfferStatus.Accepted => "Aceptada",
-        OfferStatus.Rejected => "Rechazada",
-        _ => "Pendiente"
-    };
 }
 
 <div class="container py-4">
@@ -36,51 +22,61 @@
                 <p class="lead-soft">Propiedad @property?.Code</p>
             </div>
 
-            <div class="panel p-0">
-                <table class="table mb-0 align-middle">
-                    <thead>
-                        <tr>
-                            <th class="ps-4">Fecha</th>
-                            <th>Monto</th>
-                            <th>Estado</th>
-                            <th class="text-end pe-4">Acción</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var offer in offers)
-                        {
+            @if (offers.Count == 0)
+            {
+                <div class="empty-state">
+                    <svg class="icon"><use href="#i-tag" /></svg>
+                    <p>Este cliente no ha realizado ofertas sobre esta propiedad.</p>
+                </div>
+            }
+            else
+            {
+                <div class="panel p-0 table-responsive">
+                    <table class="table mb-0 align-middle">
+                        <thead>
                             <tr>
-                                <td class="ps-4">@offer.OfferDate.ToString("dd/MM/yyyy HH:mm")</td>
-                                <td class="fw-semibold">@offer.Amount.ToString("C0", culture)</td>
-                                <td><span class="badge @StatusBadge(offer.Status)">@StatusText(offer.Status)</span></td>
-                                <td class="text-end pe-4">
-                                    @if (offer.Status == OfferStatus.Pending)
-                                    {
-                                        <div class="d-inline-flex gap-2">
-                                            <form method="post" asp-controller="AgentHome" asp-action="AcceptOffer">
-                                                <input type="hidden" name="offerId" value="@offer.Id" />
-                                                <input type="hidden" name="propertyId" value="@property?.Id" />
-                                                <input type="hidden" name="clientId" value="@offer.ClientId" />
-                                                <button type="submit" class="btn btn-sm btn-brand">Aceptar</button>
-                                            </form>
-                                            <form method="post" asp-controller="AgentHome" asp-action="RejectOffer">
-                                                <input type="hidden" name="offerId" value="@offer.Id" />
-                                                <input type="hidden" name="propertyId" value="@property?.Id" />
-                                                <input type="hidden" name="clientId" value="@offer.ClientId" />
-                                                <button type="submit" class="btn btn-sm btn-outline-brand">Rechazar</button>
-                                            </form>
-                                        </div>
-                                    }
-                                    else
-                                    {
-                                        <span class="text-secondary">—</span>
-                                    }
-                                </td>
+                                <th class="ps-4">Fecha</th>
+                                <th>Monto</th>
+                                <th>Estado</th>
+                                <th class="text-end pe-4">Acción</th>
                             </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
+                        </thead>
+                        <tbody>
+                            @foreach (var offer in offers)
+                            {
+                                <tr>
+                                    <td class="ps-4 money text-secondary">@offer.OfferDate.ToString("dd/MM/yyyy HH:mm")</td>
+                                    <td class="offer-amount">@offer.Amount.ToString("C0", culture)</td>
+                                    <td><partial name="_OfferStatusBadge" model="offer.Status" /></td>
+                                    <td class="text-end pe-4">
+                                        @if (offer.Status == OfferStatus.Pending)
+                                        {
+                                            <div class="d-inline-flex gap-2">
+                                                <form method="post" asp-controller="AgentHome" asp-action="AcceptOffer">
+                                                    <input type="hidden" name="offerId" value="@offer.Id" />
+                                                    <input type="hidden" name="propertyId" value="@property?.Id" />
+                                                    <input type="hidden" name="clientId" value="@offer.ClientId" />
+                                                    <button type="submit" class="btn btn-sm btn-brand">Aceptar</button>
+                                                </form>
+                                                <form method="post" asp-controller="AgentHome" asp-action="RejectOffer">
+                                                    <input type="hidden" name="offerId" value="@offer.Id" />
+                                                    <input type="hidden" name="propertyId" value="@property?.Id" />
+                                                    <input type="hidden" name="clientId" value="@offer.ClientId" />
+                                                    <button type="submit" class="btn btn-sm btn-outline-brand">Rechazar</button>
+                                                </form>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-secondary">—</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
         </div>
     </div>
 </div>

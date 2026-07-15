@@ -1,0 +1,42 @@
+@{
+    var icon = ViewData["ConfirmIcon"] as string ?? "i-building";
+    var heading = ViewData["ConfirmHeading"] as string ?? "";
+    var subtitle = ViewData["ConfirmSubtitle"] as string;
+    var note = ViewData["ConfirmNote"] as string;
+    var action = ViewData["ConfirmAction"] as string ?? "";
+    var controller = ViewData["ConfirmController"] as string;
+    var id = ViewData["ConfirmId"]?.ToString();
+    var extraName = ViewData["ConfirmExtraName"] as string;
+    var extraValue = ViewData["ConfirmExtraValue"]?.ToString();
+    var buttonText = ViewData["ConfirmButtonText"] as string ?? "Aceptar";
+    var isDanger = ViewData["ConfirmDanger"] as bool? ?? false;
+}
+
+<div class="auth-wrap">
+    <div class="auth-card confirm-card text-center">
+        <span class="confirm-icon @(isDanger ? "is-danger" : "")">
+            <svg class="icon"><use href="#@icon" /></svg>
+        </span>
+        <h1>@heading</h1>
+        @if (!string.IsNullOrWhiteSpace(subtitle))
+        {
+            <p class="text-secondary mb-1">@subtitle</p>
+        }
+        @if (!string.IsNullOrWhiteSpace(note))
+        {
+            <p class="text-secondary mb-0">@note</p>
+        }
+
+        <div class="d-flex justify-content-center gap-2 mt-4">
+            <form method="post" asp-controller="@controller" asp-action="@action">
+                <input type="hidden" name="id" value="@id" />
+                @if (!string.IsNullOrWhiteSpace(extraName))
+                {
+                    <input type="hidden" name="@extraName" value="@extraValue" />
+                }
+                <button type="submit" class="@(isDanger ? "btn btn-danger-soft" : "btn btn-brand")">@buttonText</button>
+            </form>
+            <a class="btn btn-ghost" asp-controller="@controller" asp-action="Index">Cancelar</a>
+        </div>
+    </div>
+</div>

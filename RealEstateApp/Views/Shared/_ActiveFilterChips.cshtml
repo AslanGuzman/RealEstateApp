@@ -1,0 +1,85 @@
+@using Microsoft.AspNetCore.Routing
+@{
+    var filterController = ViewData["FilterController"] as string ?? "Home";
+    var propertyTypes = ViewBag.PropertyTypes as List<RealEstateApp.Core.Application.Dtos.PropertyType.PropertyTypeDto> ?? [];
+    var query = Context.Request.Query;
+    var culture = new CultureInfo("es-DO");
+    var code = query["Code"].ToString();
+    var chips = new List<(string Label, string Key)>();
+
+    string Money(string raw) => decimal.TryParse(raw, NumberStyles.Any, CultureInfo.InvariantCulture, out var value)
+        ? value.ToString("C0", culture)
+        : raw;
+
+    if (!string.IsNullOrWhiteSpace(code))
+    {
+        chips.Add(($"Código {code}", "Code"));
+    }
+    else
+    {
+        var typeId = query["PropertyTypeId"].ToString();
+
+        if (!string.IsNullOrWhiteSpace(typeId))
+        {
+            var typeName = propertyTypes.FirstOrDefault(t => t.Id.ToString() == typeId)?.Name;
+
+            if (!string.IsNullOrWhiteSpace(typeName))
+            {
+                chips.Add((typeName, "PropertyTypeId"));
+            }
+        }
+
+        var minPrice = query["MinPrice"].ToString();
+        if (!string.IsNullOrWhiteSpace(minPrice))
+        {
+            chips.Add(($"Desde {Money(minPrice)}", "MinPrice"));
+        }
+
+        var maxPrice = query["MaxPrice"].ToString();
+        if (!string.IsNullOrWhiteSpace(maxPrice))
+        {
+            chips.Add(($"Hasta {Money(maxPrice)}", "MaxPrice"));
+        }
+
+        var rooms = query["Rooms"].ToString();
+        if (!string.IsNullOrWhiteSpace(rooms))
+        {
+            chips.Add(($"{rooms} hab.", "Rooms"));
+        }
+
+        var bathrooms = query["Bathrooms"].ToString();
+        if (!string.IsNullOrWhiteSpace(bathrooms))
+        {
+            chips.Add(($"{bathrooms} baños", "Bathrooms"));
+        }
+    }
+
+    string RemoveUrl(string key)
+    {
+        var values = new RouteValueDictionary();
+
+        foreach (var entry in query)
+        {
+            if (entry.Key != key && !string.IsNullOrWhiteSpace(entry.Value))
+            {
+                values[entry.Key] = entry.Value.ToString();
+            }
+        }
+
+        return Url.Action("Index", filterController, values) ?? "/";
+    }
+}
+
+@if (chips.Count > 0)
+{
+    <div class="filter-chips">
+        <span class="filter-chips-label">Filtros activos</span>
+        @foreach (var chip in chips)
+        {
+            <span class="filter-chip">
+                @chip.Label
+                <a class="chip-remove" href="@RemoveUrl(chip.Key)" title="Quitar filtro" aria-label="Quitar filtro @chip.Label">&times;</a>
+            </span>
+        }
+    </div>
+}

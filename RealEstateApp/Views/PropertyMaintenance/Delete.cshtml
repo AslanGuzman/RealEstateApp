@@ -2,22 +2,15 @@
 @{
     ViewData["Title"] = "Eliminar propiedad";
     var culture = new CultureInfo("es-DO");
+    ViewData["ConfirmIcon"] = "i-building";
+    ViewData["ConfirmHeading"] = "¿Está seguro que desea eliminar esta propiedad?";
+    ViewData["ConfirmSubtitle"] = $"Código {Model.Code} · {Model.PropertyTypeName} · {Model.Price.ToString("C0", culture)}";
+    ViewData["ConfirmNote"] = "Se eliminarán también sus imágenes, mejoras, ofertas, mensajes y favoritos. Esta acción no se puede deshacer.";
+    ViewData["ConfirmAction"] = "DeleteConfirmed";
+    ViewData["ConfirmController"] = "PropertyMaintenance";
+    ViewData["ConfirmId"] = Model.Id;
+    ViewData["ConfirmButtonText"] = "Eliminar propiedad";
+    ViewData["ConfirmDanger"] = true;
 }
 
-<div class="auth-wrap">
-    <div class="auth-card text-center">
-        <div class="auth-brand">
-            <svg class="icon"><use href="#i-building" /></svg>
-        </div>
-        <h1>¿Está seguro que desea eliminar esta propiedad?</h1>
-        <p class="text-secondary">Código @Model.Code · @Model.PropertyTypeName · @Model.Price.ToString("C0", culture)</p>
-
-        <div class="d-flex justify-content-center gap-2 mt-3">
-            <form method="post" asp-controller="PropertyMaintenance" asp-action="DeleteConfirmed">
-                <input type="hidden" name="id" value="@Model.Id" />
-                <button type="submit" class="btn btn-brand">Aceptar</button>
-            </form>
-            <a class="btn btn-ghost" asp-controller="PropertyMaintenance" asp-action="Index">Cancelar</a>
-        </div>
-    </div>
-</div>
+<partial name="_ConfirmPanel" view-data="ViewData" />

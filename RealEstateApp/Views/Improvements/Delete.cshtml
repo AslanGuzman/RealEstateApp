@@ -1,18 +1,15 @@
 @model RealEstateApp.Core.Application.Dtos.Improvement.ImprovementDto
 @{
     ViewData["Title"] = "Eliminar mejora";
+    ViewData["ConfirmIcon"] = "i-check";
+    ViewData["ConfirmHeading"] = "¿Está seguro que desea eliminar esta mejora?";
+    ViewData["ConfirmSubtitle"] = Model.Name;
+    ViewData["ConfirmNote"] = "Solo se eliminará la mejora de las propiedades que la tengan asociada. Las propiedades no se eliminarán.";
+    ViewData["ConfirmAction"] = "DeleteConfirmed";
+    ViewData["ConfirmController"] = "Improvements";
+    ViewData["ConfirmId"] = Model.Id;
+    ViewData["ConfirmButtonText"] = "Eliminar";
+    ViewData["ConfirmDanger"] = true;
 }
-<div class="auth-wrap">
-    <div class="auth-card text-center">
-        <div class="auth-brand"><svg class="icon"><use href="#i-check" /></svg></div>
-        <h1>¿Está seguro que desea eliminar esta mejora?</h1>
-        <p class="text-secondary">@Model.Name — las propiedades asociadas no se eliminarán.</p>
-        <div class="d-flex justify-content-center gap-2 mt-3">
-            <form method="post" asp-action="DeleteConfirmed">
-                <input type="hidden" name="id" value="@Model.Id" />
-                <button type="submit" class="btn btn-brand">Aceptar</button>
-            </form>
-            <a class="btn btn-ghost" asp-action="Index">Cancelar</a>
-        </div>
-    </div>
-</div>
+
+<partial name="_ConfirmPanel" view-data="ViewData" />

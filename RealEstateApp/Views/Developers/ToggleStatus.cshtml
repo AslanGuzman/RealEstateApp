@@ -2,22 +2,21 @@
 @model UserListDto
 @{
     ViewData["Title"] = Model.IsActive ? "Inactivar desarrollador" : "Activar desarrollador";
-    var target = !Model.IsActive;
+    ViewData["ConfirmIcon"] = "i-user";
+    ViewData["ConfirmHeading"] = Model.IsActive
+        ? "¿Está seguro que desea inactivar este desarrollador?"
+        : "¿Está seguro que desea activar este desarrollador?";
+    ViewData["ConfirmSubtitle"] = $"{Model.Name} {Model.LastName} · {Model.Email}";
+    ViewData["ConfirmNote"] = Model.IsActive
+        ? "El desarrollador no podrá autenticarse en la API hasta que se active de nuevo."
+        : "El desarrollador podrá autenticarse en la API.";
+    ViewData["ConfirmAction"] = "ToggleStatusConfirmed";
+    ViewData["ConfirmController"] = "Developers";
+    ViewData["ConfirmId"] = Model.Id;
+    ViewData["ConfirmExtraName"] = "isActive";
+    ViewData["ConfirmExtraValue"] = (!Model.IsActive).ToString().ToLower();
+    ViewData["ConfirmButtonText"] = Model.IsActive ? "Inactivar" : "Activar";
+    ViewData["ConfirmDanger"] = Model.IsActive;
 }
 
-<div class="auth-wrap">
-    <div class="auth-card text-center">
-        <div class="auth-brand"><svg class="icon"><use href="#i-user" /></svg></div>
-        <h1>@(Model.IsActive ? "¿Está seguro que desea inactivar este desarrollador?" : "¿Está seguro que desea activar este desarrollador?")</h1>
-        <p class="text-secondary">@Model.Name @Model.LastName · @Model.Email</p>
-
-        <div class="d-flex justify-content-center gap-2 mt-3">
-            <form method="post" asp-action="ToggleStatusConfirmed">
-                <input type="hidden" name="id" value="@Model.Id" />
-                <input type="hidden" name="isActive" value="@target.ToString().ToLower()" />
-                <button type="submit" class="btn btn-brand">Aceptar</button>
-            </form>
-            <a class="btn btn-ghost" asp-action="Index">Cancelar</a>
-        </div>
-    </div>
-</div>
+<partial name="_ConfirmPanel" view-data="ViewData" />
