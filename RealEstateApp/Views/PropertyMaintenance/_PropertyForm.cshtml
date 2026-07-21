@@ -61,15 +61,16 @@
         </div>
         <div class="col-12">
             <label class="form-label">Mejoras</label>
-            <div class="row row-cols-2 row-cols-md-3 g-2">
+            <div class="improvement-picker">
                 @foreach (var improvement in improvements)
                 {
-                    <div class="col">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="ImprovementIds" value="@improvement.Id" id="imp-@improvement.Id"
-                                   checked="@(Model.ImprovementIds.Contains(improvement.Id))" />
-                            <label class="form-check-label" for="imp-@improvement.Id">@improvement.Name</label>
-                        </div>
+                    <div class="improvement-option">
+                        <input class="form-check-input" type="checkbox" name="ImprovementIds" value="@improvement.Id" id="imp-@improvement.Id"
+                               checked="@(Model.ImprovementIds.Contains(improvement.Id))" />
+                        <label for="imp-@improvement.Id">
+                            <span class="check-mark"><svg class="icon"><use href="#i-check" /></svg></span>
+                            @improvement.Name
+                        </label>
                     </div>
                 }
             </div>
@@ -86,12 +87,16 @@
                         <img src="~/@image" alt="Imagen actual" class="maint-thumb maint-thumb-lg" />
                     }
                 </div>
+                <div class="form-check mt-2">
+                    <input asp-for="KeepCurrentImages" class="form-check-input" id="KeepCurrentImages" />
+                    <label class="form-check-label" for="KeepCurrentImages">Mantener las imágenes actuales</label>
+                </div>
             </div>
         }
 
         <div class="col-12">
             <label asp-for="Images" class="form-label">
-                Imágenes de la propiedad @(isEdit ? "(opcional, reemplaza las actuales)" : "(de 1 a 4)")
+                Imágenes de la propiedad @(isEdit ? "(opcional, se añaden a las actuales si las mantienes)" : "(de 1 a 4)")
             </label>
             <input asp-for="Images" type="file" class="form-control" accept=".jpg,.jpeg,.png" multiple />
             <span asp-validation-for="Images" class="field-validation-error"></span>
