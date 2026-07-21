@@ -167,9 +167,13 @@ namespace RealEstateApp.Controllers
             var newImages = vm.Images?.Where(i => i != null && i.Length > 0).ToList() ?? [];
             List<string> imagePaths = [];
 
-            if (newImages.Count > 0)
+            if (!vm.KeepCurrentImages)
             {
                 DeletePropertyImages(property.Images);
+            }
+
+            if (newImages.Count > 0)
+            {
                 imagePaths = UploadImages(newImages, Guid.NewGuid().ToString());
             }
 
@@ -184,7 +188,8 @@ namespace RealEstateApp.Controllers
                 Bathrooms = vm.Bathrooms!.Value,
                 AgentId = AgentId(),
                 Images = imagePaths,
-                ImprovementIds = vm.ImprovementIds
+                ImprovementIds = vm.ImprovementIds,
+                KeepCurrentImages = vm.KeepCurrentImages
             }, vm.Id);
 
             TempData["Toast"] = "La propiedad fue actualizada correctamente.";

@@ -97,9 +97,13 @@ namespace RealEstateApp.Core.Application.Services
                 await _propertyImprovementRepository.DeleteByPropertyAsync(id);
                 await AddImprovementsAsync(id, dto.ImprovementIds);
 
-                if (dto.Images.Count > 0)
+                if (!dto.KeepCurrentImages)
                 {
                     await ReplaceImagesAsync(id, dto.Images);
+                }
+                else if (dto.Images.Count > 0)
+                {
+                    await AddImagesAsync(id, dto.Images);
                 }
             });
 

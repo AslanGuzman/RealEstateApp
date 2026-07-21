@@ -12,5 +12,6 @@ namespace RealEstateApp.Core.Application.Dtos.Property
         public required string AgentId { get; set; }
         public List<string> Images { get; set; } = [];
         public List<int> ImprovementIds { get; set; } = [];
+        public bool KeepCurrentImages { get; set; } = true;
     }
 }

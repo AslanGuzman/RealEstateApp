@@ -40,6 +40,8 @@ namespace RealEstateApp.Core.Application.ViewModels.Property
 
         public List<string> CurrentImages { get; set; } = [];
 
+        public bool KeepCurrentImages { get; set; } = true;
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             if (ImprovementIds.Count == 0)
@@ -54,7 +56,13 @@ namespace RealEstateApp.Core.Application.ViewModels.Property
                 yield return new ValidationResult("Debe cargar al menos una imagen de la propiedad", [nameof(Images)]);
             }
 
-            var totalImages = Id == 0 ? newImagesCount : (newImagesCount > 0 ? newImagesCount : CurrentImages.Count);
+            var keepCount = Id != 0 && KeepCurrentImages ? CurrentImages.Count : 0;
+            var totalImages = keepCount + newImagesCount;
+
+            if (Id != 0 && totalImages == 0)
+            {
+                yield return new ValidationResult("La propiedad debe mantener al menos una imagen", [nameof(Images)]);
+            }
 
             if (totalImages > 4)
             {
