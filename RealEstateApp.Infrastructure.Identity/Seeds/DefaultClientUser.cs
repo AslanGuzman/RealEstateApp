@@ -10,7 +10,7 @@ namespace RealEstateApp.Infrastructure.Identity.Seeds
         {
             AppUser user = new()
             {
-                Name = "Laura",
+                Name = "Leo",
                 LastName = "Mendez",
                 Email = "client@email.com",
                 UserName = "client",

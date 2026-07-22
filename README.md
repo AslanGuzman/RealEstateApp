@@ -25,11 +25,23 @@ Las migraciones se aplican al arrancar.
 
 ## Ejecución
 
+### Web App (MVC)
+
 ```bash
 dotnet run --project RealEstateApp
 ```
 
 `http://localhost:5089` · `https://localhost:7243`
+
+### Web API
+
+```bash
+dotnet run --project RealEstateApi
+```
+
+`http://localhost:5018` · `https://localhost:7286`
+
+Swagger disponible en desarrollo: `https://localhost:7286/swagger`
 
 ## Acceso
 

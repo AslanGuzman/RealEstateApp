@@ -1,7 +1,10 @@
+using Microsoft.EntityFrameworkCore;
 using RealEstateApi.Extensions;
 using RealEstateApp.Core.Application;
 using RealEstateApp.Infrastructure.Identity;
+using RealEstateApp.Infrastructure.Identity.Contexts;
 using RealEstateApp.Infrastructure.Persistence;
+using RealEstateApp.Infrastructure.Persistence.Contexts;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,6 +23,17 @@ builder.Services.AddApiVersioningExtension();
 builder.Services.AddSwaggerExtension();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var appDb = scope.ServiceProvider
+        .GetRequiredService<RealEstateAppContext>();
+    await appDb.Database.MigrateAsync();
+
+    var identityDb = scope.ServiceProvider
+        .GetRequiredService<IdentityContext>();
+    await identityDb.Database.MigrateAsync();
+}
 
 await app.Services.RunIdentitySeedAsync();
 
