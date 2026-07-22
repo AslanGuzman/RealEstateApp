@@ -28,11 +28,13 @@ namespace RealEstateApp.Controllers
                 return View(new List<PropertyDto>());
             }
 
+            var activeAgentIds = await ActiveAgentIdsAsync();
+
             if (!string.IsNullOrWhiteSpace(filters.Code))
             {
                 var property = await _propertyService.GetByCodeAsync(filters.Code.Trim());
 
-                if (property == null || property.Status != PropertyStatus.Available)
+                if (property == null || property.Status != PropertyStatus.Available || !activeAgentIds.Contains(property.AgentId))
                 {
                     ViewBag.EmptyMessage = "No se encontró ninguna propiedad disponible con el código ingresado.";
                     return View(new List<PropertyDto>());
@@ -47,7 +49,8 @@ namespace RealEstateApp.Controllers
                 MinPrice = filters.MinPrice,
                 MaxPrice = filters.MaxPrice,
                 Rooms = filters.Rooms,
-                Bathrooms = filters.Bathrooms
+                Bathrooms = filters.Bathrooms,
+                AllowedAgentIds = activeAgentIds
             });
 
             if (properties.Count == 0)
@@ -61,8 +64,9 @@ namespace RealEstateApp.Controllers
         public async Task<IActionResult> Detail(int id)
         {
             var property = await _propertyService.GetByIdWithDetailsAsync(id);
+            var activeAgentIds = await ActiveAgentIdsAsync();
 
-            if (property == null || property.Status != PropertyStatus.Available)
+            if (property == null || property.Status != PropertyStatus.Available || !activeAgentIds.Contains(property.AgentId))
             {
                 ViewBag.EmptyMessage = "La propiedad solicitada no existe o no se encuentra disponible.";
                 return View(null);
@@ -71,6 +75,12 @@ namespace RealEstateApp.Controllers
             ViewBag.AgentContact = await _agentService.GetAgentContactAsync(property.AgentId);
 
             return View(property);
+        }
+
+        private async Task<List<string>> ActiveAgentIdsAsync()
+        {
+            var agents = await _agentService.GetAllAgentsAsync();
+            return agents.Select(a => a.Id).ToList();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

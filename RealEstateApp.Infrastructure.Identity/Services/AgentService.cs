@@ -125,6 +125,8 @@ namespace RealEstateApp.Infrastructure.Identity.Services
                 Name = user.Name,
                 LastName = user.LastName,
                 ProfileImage = user.ProfileImage,
+                Email = user.Email,
+                Phone = user.PhoneNumber,
                 IsActive = user.IsActive,
                 PropertiesQuantity = propertiesQuantity
             };

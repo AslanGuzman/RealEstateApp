@@ -35,7 +35,8 @@ namespace RealEstateApp.Infrastructure.Identity.Services
                 Errors = []
             };
 
-            var user = await UserManager.FindByNameAsync(loginDto.UserName);
+            var user = await UserManager.FindByNameAsync(loginDto.UserName)
+                ?? await UserManager.FindByEmailAsync(loginDto.UserName);
 
             if (user == null)
             {

@@ -167,6 +167,11 @@ namespace RealEstateApp.Core.Application.Services
                 query = query.Where(p => p.AgentId == filters.AgentId);
             }
 
+            if (filters.AllowedAgentIds != null)
+            {
+                query = query.Where(p => filters.AllowedAgentIds.Contains(p.AgentId));
+            }
+
             var properties = await query.OrderByDescending(p => p.CreatedAt).ToListAsync();
 
             return _mapper.Map<List<PropertyDto>>(properties);

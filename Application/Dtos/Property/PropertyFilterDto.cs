@@ -9,6 +9,7 @@ namespace RealEstateApp.Core.Application.Dtos.Property
         public int? Rooms { get; set; }
         public int? Bathrooms { get; set; }
         public string? AgentId { get; set; }
+        public List<string>? AllowedAgentIds { get; set; }
         public bool OnlyAvailable { get; set; } = true;
     }
 }

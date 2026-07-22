@@ -19,6 +19,7 @@ namespace RealEstateApp.Core.Application.Dtos.Property
         public required string AgentId { get; set; }
         public string? AgentName { get; set; }
         public PropertyStatus Status { get; set; }
+        public string StatusName => Status == PropertyStatus.Available ? "Disponible" : "Vendida";
         public DateTime CreatedAt { get; set; }
         public List<string> Images { get; set; } = [];
         public List<ImprovementDto> Improvements { get; set; } = [];
